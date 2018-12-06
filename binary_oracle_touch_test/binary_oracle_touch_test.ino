@@ -17,8 +17,6 @@ int sensing_period_in_millis = 40;
 
 // --- END PARAMETERS TO ADJUST -----
 
-int SENSING_PERIOD_IN_MILLIS = 40;
-
 // array for sensor values
 int sensor_values[600];
 int sensor_count = 0;
@@ -56,7 +54,7 @@ void setup() {
 void loop()
 {
 
-  EVERY_N_MILLISECONDS(SENSING_PERIOD_IN_MILLIS) {
+  EVERY_N_MILLISECONDS(sensing_period_in_millis) {
     check_binary_signal();
     if (signal_finished){
       process_signal();
