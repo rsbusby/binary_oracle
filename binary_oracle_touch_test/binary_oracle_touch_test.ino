@@ -1,7 +1,7 @@
+// use FastLED for timing
 #include "FastLED.h"
 
-
-
+// ----------------------------------
 // --- PARAMETERS TO ADJUST ---------
 // 1 for simulated sensor data, 0 with real bio-signal
 #define SIMULATED_DATA 0
@@ -15,15 +15,23 @@
 // how often we poll the bio-signal
 int sensing_period_in_millis = 40;
 
+// seconds for sensing
+int sensor_time_seconds = 3;
+
+// time to record sensor values when waiting for signal (takes 2 to start)
+int millis_between_start_detections = 280;
+
+// low and high threshold for a signal to be detected
+int lo_signal_threshold = 300;
+int hi_signal_threshold = 700;
+
 // --- END PARAMETERS TO ADJUST -----
+// ----------------------------------
 
 // array for sensor values
 int sensor_values[600];
 int sensor_count = 0;
 
-//int value_count
-
-//
 int waiting = 1;
 int start_detected = 0;
 int start_time_in_millis;
@@ -31,16 +39,10 @@ int signal_finished = 0;
 int signal;
 
 boolean signal_detected_first = false;
-int millis_between_start_detections = 300;
 
-int lo_signal_threshold = 300;
-int hi_signal_threshold = 700;
-
-int sensor_time_seconds = 1;
 long sensor_time_millis = sensor_time_seconds * 1000;
 long max_diff_millis;
 long current_time_in_millis;
-
 
 
 void setup() {
