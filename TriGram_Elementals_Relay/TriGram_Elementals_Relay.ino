@@ -9,9 +9,9 @@
 // Pin 3- Analog Voltage Output
 
 // input from a touch sensor
-const int TOUCH_PIN = 15;
+const int TOUCH_PIN = 15; //azotek
 
-const int pwPin1_wind = 4;  // digital pin 4, goes to sonar pin 2
+const int pwPin1_wind = 14;  // digital pin 4, goes to sonar sensor's pin 2
 const int transistorPin_wind = 19;    // connected to the base of the fan transistor
 long sensor_wind, mm_wind, inches_wind;  // data from sonar sensor
 
@@ -20,7 +20,7 @@ const int lightning_time_scale = 45;
 const int transistorPin_lightning = 20;    // connected to the base of the light transistor
 long tSig_lightning = 0;
 
-const int pwPin1_water = 3;  // digital pin 3, goes to sonar pin 2
+const int pwPin1_water = 14;  // digital pin 3, goes to sonar sensor's pin 2
 const int transistorPin_water = 21;    // connected to the base of the water pump transistor
 long sensor_water, mm_water, inches_water;  // data from sonar sensor
 

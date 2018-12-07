@@ -22,8 +22,8 @@ int sensor_time_seconds = 3;
 int millis_between_start_detections = 280;
 
 // low and high threshold for a signal to be detected
-int lo_signal_threshold = 300;
-int hi_signal_threshold = 700;
+int lo_signal_threshold = 150;
+int hi_signal_threshold = 780;
 
 // --- END PARAMETERS TO ADJUST -----
 // ----------------------------------
