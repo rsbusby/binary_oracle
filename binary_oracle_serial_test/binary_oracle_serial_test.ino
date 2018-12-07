@@ -25,7 +25,7 @@ void loop()
     delay(3000);
     send_string_data_over_serial(element_2, 2);
     delay(3000);
-    send_string_data_over_serial(reaction_2, 1);
+    send_string_data_over_serial(reaction_2, 3);
 
 }
 
