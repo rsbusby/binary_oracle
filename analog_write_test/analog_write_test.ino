@@ -23,8 +23,10 @@ void loop()
 {
   // cycle on and off
   analogWrite(transistorPin_test, analog_write_value);
+  Serial.println("On");
   delay(2000);
   analogWrite(transistorPin_test, 0);
+  Serial.println("Off");
   delay(2000);
 
 }
