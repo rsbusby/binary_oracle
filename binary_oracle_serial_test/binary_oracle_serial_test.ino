@@ -26,7 +26,7 @@ void loop()
     send_string_data_over_serial(7, random(2));
     delay(3000);
     send_string_data_over_serial(8, random(2));
-
+    delay(8000);
 }
 
 void send_string_data_over_serial(int sequence_step, int byte_value) {
