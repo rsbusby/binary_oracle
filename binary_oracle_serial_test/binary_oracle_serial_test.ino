@@ -12,10 +12,10 @@ void setup() {
 void loop()
 {
 
-    // get random values 
+    // get random values
     delay(2000);
     send_string_data_over_serial(1, random(2));
-    send_string_data_over_serial(1, random(2));
+    send_string_data_over_serial(2, random(2));
     send_string_data_over_serial(3, random(2));
     delay(3000);
     send_string_data_over_serial(4, random(2));
