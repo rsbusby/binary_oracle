@@ -12,15 +12,20 @@ void setup() {
 void loop()
 {
 
-    // get random values from 1 to 8
+    // get random values from 1 to 8 for elements
     int element_1 = random(1,9);
+    int reaction_1 = random(2);
     int element_2 = random(1,9);
+    int reaction_2 = random(2);
 
+    delay(2000);
     send_string_data_over_serial(element_1, 0);
     delay(3000);
-    send_string_data_over_serial(element_2, 1);
+    send_string_data_over_serial(reaction_1, 1);
     delay(3000);
-
+    send_string_data_over_serial(element_2, 2);
+    delay(3000);
+    send_string_data_over_serial(reaction_2, 1);
 
 }
 
