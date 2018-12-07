@@ -13,7 +13,7 @@
 #define BIO_SIGNAL_ANALYSIS_TYPE 0
 
 // how often we poll the bio-signal
-int sensing_period_in_millis = 40;
+int sensing_period_in_millis = 100;
 
 // seconds for sensing
 int sensor_time_seconds = 3;
@@ -24,6 +24,8 @@ int millis_between_start_detections = 280;
 // low and high threshold for a signal to be detected
 int lo_signal_threshold = 150;
 int hi_signal_threshold = 780;
+
+#define show_sensor_value 1
 
 // --- END PARAMETERS TO ADJUST -----
 // ----------------------------------
@@ -75,8 +77,15 @@ void process_signal(){
 
 
 void get_analog_value_and_add_to_time_series(){
-    sensor_values[sensor_count] = analogRead(A0);
+
+    int sensor_value = analogRead(A0);
+    sensor_values[sensor_count] =
     sensor_count += 1;
+
+    if (show_sensor_value){
+      Serial.println(sensor_value);
+    }
+
 }
 
 
