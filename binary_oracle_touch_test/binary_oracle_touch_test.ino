@@ -50,7 +50,7 @@ long current_time_in_millis;
 void setup() {
   Serial.begin(9600);
   delay(1000); // 2 second delay for recovery
-  Serial.println("Starting 07: ");
+  Serial.println("Starting version 08: ");
 }
 
 
