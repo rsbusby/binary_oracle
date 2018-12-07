@@ -29,7 +29,7 @@ void loop()
 
 }
 
-void send_string_data_over_serial(int byte_value, int sequence_step) {
+void send_string_data_over_serial(int sequence_step, int byte_value) {
   // Send two integers representing the elements, can be decoded by receiver
   Serial.print(sequence_step);
   Serial.println(byte_value);
