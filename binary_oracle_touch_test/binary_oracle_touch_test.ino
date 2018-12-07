@@ -13,7 +13,7 @@
 #define BIO_SIGNAL_ANALYSIS_TYPE 0
 
 // how often we poll the bio-signal
-int sensing_period_in_millis = 1000;
+int sensing_period_in_millis = 100;
 
 // seconds for sensing
 int sensor_time_seconds = 3;
@@ -22,8 +22,8 @@ int sensor_time_seconds = 3;
 int millis_between_start_detections = 280;
 
 // low and high threshold for a signal to be detected
-int lo_signal_threshold = 300;
-int hi_signal_threshold = 700;
+int lo_signal_threshold = 150;
+int hi_signal_threshold = 600;
 
 #define show_sensor_value 1
 
