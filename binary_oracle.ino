@@ -5,9 +5,6 @@
 // ----------------------------------
 // --- PARAMETERS TO ADJUST ---------
 
-// how often we update the background lights
-int treechi_period_in_millis = 100;
-
 // how often we poll the bio-signal
 int sensing_period_in_millis = 100;
 
@@ -82,22 +79,15 @@ int touch_1;
 int touch_2;
 int touch_3;
 
-// from TreeChi
+// ---------- from TreeChi ----------------------------
 
-// Gradient palette "Green_White_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/nd/basic/tn/Green_White.png.index.html
-// converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 12 bytes of program space.
-
+// Gradient palette "Green_White_gp"
 DEFINE_GRADIENT_PALETTE( Green_White_gp ) {
     0,   0,255,  0,
   127,  42,255, 45,
   255, 255,255,255};
 
-// Gradient palette "Magenta_White_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/nd/basic/tn/Magenta_White.png.index.html
-// converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 12 bytes of program space.
+// Gradient palette "Magenta_White_gp"
 DEFINE_GRADIENT_PALETTE( Magenta_White_gp ) {
     0, 255,  0,255,
   127, 255, 55,255,
@@ -107,8 +97,6 @@ CRGBPalette16 standby_palette(Green_White_gp);
 CRGBPalette16 active_palette(Magenta_White_gp);
 
 uint8_t MAX_PALETTE_CHANGES_PER_BLEND = 36;
-
-
 
 // maximum analog signal value
 #define MAX_ANALOG  1024
@@ -120,7 +108,7 @@ unsigned int exp_brightness;
 volatile unsigned int adc_threshold = 800;
 
 // time of increased brightness after signal, in milliseconds.
-unsigned long TIMEOUT_MILLIS = 500;
+unsigned long TIMEOUT_MILLIS = sensor_time_millis;
 
 // twinkle boost
 uint8_t twinkle_boost;
@@ -154,7 +142,7 @@ unsigned int blending_period_to_active = 2;
 unsigned int blending_period_to_standby = 2;
 
 
-// --- END ADJUSTABLE PARAMETERS
+// --- END ADJUSTABLE PARAMETERS for TreeChi
 
 unsigned int NUM_BLENDING_CALLS_PER_LOOP = 1;
 unsigned int BLENDING_PERIOD_IN_MILLIS = 40;
@@ -227,13 +215,6 @@ void loop()
     show_treechi_lights();
     FastLED.show();
   }
-//
-//
-// EVERY_N_MILLISECONDS(treechi_period_in_millis) {
-//   show_treechi_lights();
-// }
-
-
 
 }
 
@@ -440,11 +421,9 @@ void light_one(int strip_index, int start_pixel, int end_pixel, CRGB color){
 
 
 // from TreeChi
-
-
-
 void show_treechi_lights_for_section(int strip_index, int start_pixel){
 
+    // DEBUG printing
     // Serial.print("Lighting TreeChi-style for strip ");
     // Serial.print(strip_index);
     // Serial.print(", start_pixel ");
@@ -461,11 +440,13 @@ void show_treechi_lights_for_section(int strip_index, int start_pixel){
      }
 }
 
-
 void show_treechi_lights(){
 
+  // set parameters
+  get_brightness();
+
   if(current_trigram == 1){
-    // show for entire 2nd trigram
+    // if on first trigram, show TreeChi for entire 2nd trigram
     show_treechi_lights_for_section(1, 0);
     show_treechi_lights_for_section(1, 50);
     show_treechi_lights_for_section(1, 100);
@@ -489,7 +470,7 @@ void show_treechi_lights(){
 }
 
 void get_brightness(){
-    adc_val = analogRead(A0);
+    // adc_val = analogRead(A0);
     adc_val = sensor.sensor_value;
 
     // reset timeout if either signal exists
