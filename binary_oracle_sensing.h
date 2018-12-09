@@ -24,6 +24,8 @@ public:
   int signal_finished = 0;
   int signal;
 
+  int sensor_value;
+
   // how often we poll the bio-signal
   // int sensing_period_in_millis = 100;
 
@@ -105,7 +107,7 @@ private:
 // signal detection and processing
 void get_analog_value_and_add_to_time_series(){
 
-    int sensor_value = analogRead(A0);
+    sensor_value = analogRead(A0);
     sensor_values[sensor_count] = sensor_value;
     sensor_count += 1;
 
