@@ -1,33 +1,33 @@
 #include "FastLED.h"
 
-#define THIS_VERSION "0.2.0"
+// #include "binary_oracle_utils.h"
+
+#include "binary_oracle_sensing.h"
+
 
 // ----------------------------------
 // --- PARAMETERS TO ADJUST ---------
-// 1 for simulated sensor data, 0 with real bio-signal
-#define SIMULATED_DATA 0
 
 // Set the method of analyzing analog bio-signal
 // 0 = Counting Peaks / Troughs
 // 1 = Average Amplitude of Peaks vs/ Troughs
 // 2 = mock random values
-#define BIO_SIGNAL_ANALYSIS_TYPE 0
-
-// how often we poll the bio-signal
+int bio_signal_analysis_type = 0;
+//
+// // // how often we poll the bio-signal
 int sensing_period_in_millis = 100;
 
 // milliseconds for sensing and recording
-unsigned long sensor_time_millis = 2000;
-
+int sensor_time_millis = 2000;
 
 // time to record sensor values when waiting for signal (takes 2 to start)
-int millis_between_start_detections = 280;
+unsigned long millis_between_start_detections = 280;
 
 // low and high threshold for a signal to be detected
 int lo_signal_threshold = 180;
 int hi_signal_threshold = 600;
 
-#define show_sensor_value 0
+int show_sensor_value = 0;
 
 unsigned long element_action_duration = 3000;
 
@@ -39,6 +39,9 @@ int led_half_gap = 5;
 
 // --- END PARAMETERS TO ADJUST -----
 // ----------------------------------
+
+BinaryOracleSensor sensor = BinaryOracleSensor(sensor_time_millis, lo_signal_threshold, hi_signal_threshold, bio_signal_analysis_type);
+
 
 // current state of system is denoted by 2 variables
 // current trigram can be 1 or 2
@@ -72,19 +75,19 @@ int current_touch_state = 1;
 //CRGB leds2[NUM_LEDS];
 CRGB leds[NUM_STRIPS][NUM_LEDS];
 
-// array for sensor values
-int sensor_values[600];
-int sensor_count = 0;
-
-int waiting;
-int start_detected = 0;
-int start_time_in_millis;
-int signal_finished = 0;
-int signal;
-
-boolean signal_detected_first = false;
-
-unsigned long max_diff_millis;
+// // array for sensor values
+// int sensor_values[600];
+// int sensor_count = 0;
+//
+// int waiting;
+// int start_detected = 0;
+// int start_time_in_millis;
+// int signal_finished = 0;
+// int signal;
+//
+// boolean signal_detected_first = false;
+//
+// unsigned long max_diff_millis;
 unsigned long current_time_in_millis;
 
 unsigned long element_start_time_in_millis;
@@ -95,15 +98,14 @@ int touch_1;
 int touch_2;
 int touch_3;
 
+
+
 void setup() {
   Serial.begin(115200);
   delay(1000); // 2 second delay for recovery
   Serial.println("Starting version 12: ");
 
-  current_time_in_millis = millis();
-  start_time_in_millis = millis();
-  waiting = 1;
-  max_diff_millis = millis_between_start_detections;
+
 
   // tell FastLED about the LED strip configuration
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
@@ -120,9 +122,10 @@ void loop()
 
   EVERY_N_MILLISECONDS(sensing_period_in_millis) {
     check_action();
-    check_binary_signal();
-    if (signal_finished){
-      process_signal();
+    sensor.check_binary_signal();
+    if (sensor.signal_finished){
+      sensor.signal_finished = 0;
+      process_signal(sensor.signal);
     }
   }
 
@@ -144,8 +147,7 @@ int get_element_index_from_binary_values(int touch_1, int touch_2, int touch_3) 
   return touch_1 + touch_2 * 2 + touch_3 * 4;
 }
 
-void process_signal(){
-  signal_finished = 0;
+void process_signal(int signal){
 
   // do something different depending on the current phase of the system:
   switch (current_touch_state) {
@@ -153,19 +155,19 @@ void process_signal(){
       Serial.print("** touch 1 recorded as ");
       Serial.println(signal);
       touch_1 = signal;
-      trigger_led_strip();
+      trigger_led_strip(signal);
       break;
     case 2:    //
       Serial.print("** touch 2 recorded as ");
       Serial.println(signal);
       touch_2 = signal;
-      trigger_led_strip();
+      trigger_led_strip(signal);
       break;
     case 3:    //
       Serial.print("** touch 3 recorded as ");
       Serial.println(signal);
       touch_3 = signal;
-      trigger_led_strip();
+      trigger_led_strip(signal);
       // Send trigram to Serial
       trigger_element_action();
       break;
@@ -257,7 +259,7 @@ void trigger_element_action(){
 // -------------------------------
 // -- LED strip lighting routines
 
-void trigger_led_strip(){
+void trigger_led_strip(int signal){
 
   // initialize for current_touch_state == 1, to avoid compiler warnings
   int start_pixel = 0;
@@ -322,202 +324,3 @@ void light_one(int strip_index, int start_pixel, int end_pixel, CRGB color){
 }
 
 // --- end lighting routines
-
-// ---------------------------------------------
-// signal detection and processing
-void get_analog_value_and_add_to_time_series(){
-
-    int sensor_value = analogRead(A0);
-    sensor_values[sensor_count] = sensor_value;
-    sensor_count += 1;
-
-    if (show_sensor_value){
-      Serial.print("  -- sensor input: ");
-      Serial.println(sensor_value);
-    }
-
-}
-
-
-void reset_time_series(){
-  sensor_count = 0;
-}
-
-
-// ---------------------------
-// main control function for sensing
-// changes program state depending on recent sensor values and time elapsed
-void check_binary_signal(){
-
-  current_time_in_millis = millis();
-
-  if (waiting == 1){
-    int started = check_start();
-    if (started){
-      Serial.println("          ++++ Detected touch ++++");
-      waiting = 0;
-      // set up for signal recording
-      max_diff_millis = sensor_time_millis;
-    }
-  }
-  else{
-  // waiting = 0, recording
-    if(current_time_in_millis - start_time_in_millis < max_diff_millis){
-      get_analog_value_and_add_to_time_series();
-      // current_time_in_millis = millis();
-    }
-    else{
-      // done listening, set up for start detection
-      waiting = 1;
-      max_diff_millis = millis_between_start_detections;
-      start_time_in_millis = millis();
-      // current_time_in_millis = millis();
-
-      // get binary signal value
-      signal_finished = 1;
-      signal = get_binary_from_time_series();
-    }
-  }
-}
-
-// -----------------------------
-// functions to detect start of signal
-int min_sensor_val(){
-  int min_val = 1023;
-  for (int i=0; i < sensor_count;i++ ){
-    if ( sensor_values[i] < min_val ){
-      min_val = sensor_values[i];
-    }
-  }
-  return min_val;
-}
-
-
-int max_sensor_val(){
-  int max_val = 0;
-  for (int i=0; i < sensor_count;i++ ){
-    if ( sensor_values[i] > max_val ){
-      max_val = sensor_values[i];
-    }
-  }
-  return max_val;
-}
-
-
-int detect_signal_in_time_series(){
-  // check values in sensor_values to see if any past threshold
-
-  if(SIMULATED_DATA){
-    return random(2);
-  }
-
-  if ( max_sensor_val() > hi_signal_threshold || min_sensor_val() < lo_signal_threshold){
-    return 1;
-  }
-  else{
-    return 0;
-  }
-}
-
-
-void reset_signal_detection(){
-  reset_time_series();
-  current_time_in_millis = millis();
-  start_time_in_millis = millis();
-}
-
-
-int check_start(){
-
-  // Serial.print("check_start:  ");
-
-  current_time_in_millis = millis();
-
-  // Serial.println(current_time_in_millis - start_time_in_millis);
-
-  // if not done listening, record and keep going
-  if(current_time_in_millis - start_time_in_millis < max_diff_millis){
-    // Serial.println("readin");
-    get_analog_value_and_add_to_time_series();
-    return 0;
-  }
-
-  // done listening for start
-  int signal_detected = detect_signal_in_time_series();
-
-  if ( ! signal_detected ){
-    signal_detected_first = 0;
-    reset_signal_detection();
-    return 0;
-  }
-  if (signal_detected_first){
-      signal_detected_first = 0;
-      // don't reset sensor data, keep the last period
-      return 1;
-  }
-  else{
-    // detected a signal, but will wait one more cycle
-    Serial.println("          ++ Possible touch, debouncing ++");
-    signal_detected_first = 1;
-    reset_signal_detection();
-    return 0;
-  }
-}
-
-
-// --------------------------------------------
-// functions to determine binary signal value
-int get_mean(){
-  int sum = 0;
-  for (int i=0; i < sensor_count;i++ ){
-    sum += sensor_values[i];
-  }
-  // TODO: would this be faster without float conversion?
-  return int(sum / float(sensor_count));
-
-}
-
-int compare_troughs_and_peaks(int ref_val){
-  // compare number of values above and below a reference value
-  int lo_count = 0;
-  int hi_count = 0;
-
-  for (int i=0; i < sensor_count;i++ ){
-    int val = sensor_values[i];
-    if ( val < ref_val ){
-      lo_count += 1;
-    }
-    else if (val > ref_val){
-      hi_count += 1;
-    }
-  }
-
-  if (hi_count > lo_count){
-    return 1;
-  }
-  return 0;
-}
-
-int get_binary_signal_from_counts(){
-  // method 0 to get a roughly 50:50 value from the bio-signal
-  int mean = get_mean();
-  return compare_troughs_and_peaks(mean);
-}
-
-int get_binary_from_time_series() {
-
-   if (BIO_SIGNAL_ANALYSIS_TYPE == 2 || SIMULATED_DATA){
-     // fake it
-     return random(2);
-   }
-   else if (BIO_SIGNAL_ANALYSIS_TYPE == 1){
-     // TODO: type 1
-     return random(2);
-   }
-   else{
-     // BIO_SIGNAL_ANALYSIS_TYPE == 0
-     return get_binary_signal_from_counts();
-   }
-}
-
-// ------ end sensor detection and processing
