@@ -8,7 +8,6 @@ class BinaryOracleSensor
       int sensor_values[600];
       int sensor_count = 0;
 
-      int waiting;
       int start_detected = 0;
       int start_time_in_millis;
 
@@ -24,6 +23,7 @@ public:
   int signal;
 
   int sensor_value;
+  int waiting;
 
   // how often we poll the bio-signal
   // int sensing_period_in_millis = 100;

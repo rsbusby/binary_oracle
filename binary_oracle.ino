@@ -4,7 +4,7 @@
 
 // ----------------------------------
 // --- PARAMETERS TO ADJUST ---------
-boolean debug = false;
+boolean debug = true;
 
 // how often we poll the bio-signal
 int sensing_period_in_millis = 100;
@@ -271,7 +271,7 @@ void log_process_signal(int signal){
     Serial.print("** element reaction ");
   }
   Serial.print(current_touch_state);
-  Serial.print("recorded as ");
+  Serial.print(" recorded as ");
   Serial.println(signal);
 }
 
@@ -301,10 +301,15 @@ void process_signal(int signal){
       send_string_data_over_serial(3 + (current_trigram - 1) * 4, touch_3);
 
       trigger_element_action();
+
+      // don't wait for a touch this time
+      sensor.waiting = 0;
+
       break;
     case 4:
       // Send element reaction to serial
       send_string_data_over_serial(4 + (current_trigram - 1) * 4, signal);
+      //sensor.pause(time_between_trigrams_in_millis);
       break;
   }
 
