@@ -259,7 +259,7 @@ void trigger_element_action(){
 
 void trigger_led_strip(){
 
-  // for current_touch_state == 1
+  // initialize for current_touch_state == 1, to avoid compiler warnings
   int start_pixel = 0;
   int end_pixel = 50;
   CRGB color = CRGB::Yellow;
@@ -267,7 +267,7 @@ void trigger_led_strip(){
   // strip index is 0 or 1
   int current_strip_index = current_trigram - 1;
 
-
+  // determine which pixels to change, and what color
   switch (current_touch_state) {
      case 1:    //
        start_pixel = 0;
@@ -286,18 +286,20 @@ void trigger_led_strip(){
       break;
   }
 
+  // show line, with or without gap
   switch (signal) {
     case 0:    //
       // Serial.println("showing 0 in LED strip with gap");
       light_zero(current_strip_index, start_pixel, end_pixel, color);
       break;
-    case 1:    // Thunder, 001, sound file
+    case 1:    //
       // Serial.println("showing 1 in LED strip with no gap");
       light_one(current_strip_index , start_pixel, end_pixel, color);
       break;
   }
 }
 
+// show colored set of pixels, with a gap
 void light_zero(int strip_index, int start_pixel, int end_pixel, CRGB color){
 
     int half_point = (end_pixel - start_pixel) / 2;
@@ -310,6 +312,7 @@ void light_zero(int strip_index, int start_pixel, int end_pixel, CRGB color){
     FastLED.show();
 }
 
+// show colored set of pixels, with no gap
 void light_one(int strip_index, int start_pixel, int end_pixel, CRGB color){
   // light all the pixels
   for(int dot = start_pixel; dot < end_pixel; dot++) {
