@@ -118,10 +118,6 @@ void setup() {
 void loop()
 {
 
-  // EVERY_N_MILLISECONDS(800) {
-  //   Serial.println(" ----- still loopin -----");
-  // }
-
   EVERY_N_MILLISECONDS(sensing_period_in_millis) {
     check_action();
     check_binary_signal();
@@ -129,7 +125,6 @@ void loop()
       process_signal();
     }
   }
-
 
 }
 
@@ -150,9 +145,6 @@ int get_element_index_from_binary_values(int touch_1, int touch_2, int touch_3) 
 }
 
 void process_signal(){
-  // just output to serial for testing
-  // Serial.print("Signal: ");
-  // Serial.println(signal);
   signal_finished = 0;
 
   // do something different depending on the current phase of the system:
@@ -205,8 +197,6 @@ void process_signal(){
 
 // spacing for clarity
 Serial.println();
-
-
 }
 
 void reset_system(){
@@ -259,6 +249,7 @@ void trigger_element_action(){
   }
 
   analogWrite(current_element_action_pin, element_action_write_value);
+  element_action_is_on = 1;
   element_start_time_in_millis = millis();
 }
 
