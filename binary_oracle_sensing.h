@@ -3,7 +3,6 @@
 class BinaryOracleSensor
 {
 
-
       // to be private?
       // array for sensor values
       int sensor_values[600];
@@ -48,6 +47,8 @@ public:
   // 2 = mock random values
   int bio_signal_analysis_type = 0;
 
+  boolean debug = true;
+
   // Constructor - creates a BinaryOracleSensor
  // and initializes the member variables and state
  BinaryOracleSensor(int sensor_time_millis, int hi_threshold, int lo_threshold, int signal_analysis_type){
@@ -74,7 +75,9 @@ public:
    if (waiting == 1){
      int started = check_start();
      if (started){
-       Serial.println("          ++++ Detected touch ++++");
+       if (debug){
+         Serial.println("          ++++ Detected touch ++++");
+       }
        waiting = 0;
        // set up for signal recording
        max_diff_millis = sensor_time_millis;
@@ -111,7 +114,7 @@ void get_analog_value_and_add_to_time_series(){
     sensor_values[sensor_count] = sensor_value;
     sensor_count += 1;
 
-    if (show_sensor_value){
+    if (show_sensor_value and debug){
       Serial.print("  -- sensor input: ");
       Serial.println(sensor_value);
     }
@@ -171,15 +174,10 @@ void reset_signal_detection(){
 
 int check_start(){
 
-  // Serial.print("check_start:  ");
-
   current_time_in_millis = millis();
-
-  // Serial.println(current_time_in_millis - start_time_in_millis);
 
   // if not done listening, record and keep going
   if(current_time_in_millis - start_time_in_millis < max_diff_millis){
-    // Serial.println("readin");
     get_analog_value_and_add_to_time_series();
     return 0;
   }
@@ -199,7 +197,9 @@ int check_start(){
   }
   else{
     // detected a signal, but will wait one more cycle
-    Serial.println("          ++ Possible touch, debouncing ++");
+    if (debug){
+      Serial.println("          ++ Possible touch, debouncing ++");
+    }
     signal_detected_first = 1;
     reset_signal_detection();
     return 0;

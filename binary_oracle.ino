@@ -4,6 +4,7 @@
 
 // ----------------------------------
 // --- PARAMETERS TO ADJUST ---------
+boolean debug = false;
 
 // how often we poll the bio-signal
 int sensing_period_in_millis = 100;
@@ -15,8 +16,8 @@ int sensor_time_millis = 2000;
 unsigned long millis_between_start_detections = 280;
 
 // low and high threshold for a signal to be detected
-int lo_signal_threshold = 180;
-int hi_signal_threshold = 600;
+unsigned int lo_signal_threshold = 180;
+unsigned int hi_signal_threshold = 600;
 
 int show_sensor_value = 0;
 
@@ -180,7 +181,6 @@ CRGBPalette16 gTargetPalette( CRGB::Blue);
 void setup() {
   Serial.begin(115200);
   delay(1000); // 2 second delay for recovery
-  Serial.println("Starting version 12: ");
 
   // tell FastLED about the LED strip configuration
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
@@ -197,12 +197,34 @@ void setup() {
   sensor.sensor_time_millis = sensor_time_millis;
   sensor.bio_signal_analysis_type = bio_signal_analysis_type;
   sensor.simulated_data = 0;
+  sensor.debug = debug;
 
 }
 
 // main loop
 void loop()
 {
+
+  // reporting to serial output
+  if (debug){
+    EVERY_N_MILLISECONDS(LOGGING_PERIOD_IN_MILLIS) {
+      Serial.print("Time since last event: ");
+      Serial.println(millis_since_last_event);
+      Serial.print("touchRead: ");
+     Serial.println(touchread);
+     Serial.print("Analog: ");
+     Serial.println(adc_val);
+     //Serial.print("FastLED Brightness Level: ");
+     //Serial.println(255); // current_brightness);
+     //Serial.print("Hue: ");
+     //Serial.println(current_hue);
+     Serial.print("Current Max Brightness: ");
+     Serial.println(max_brightness);
+     Serial.print("is active: ");
+     Serial.println(is_active);
+     Serial.println();
+    }
+  }
 
   EVERY_N_MILLISECONDS(sensing_period_in_millis) {
     check_action();
@@ -234,34 +256,55 @@ int get_element_index_from_binary_values(int touch_1, int touch_2, int touch_3) 
   return touch_1 + touch_2 * 2 + touch_3 * 4;
 }
 
+void send_string_data_over_serial(int sequence_step, int byte_value) {
+  // Send two integers representing the elements, can be decoded by receiver
+  Serial.print(sequence_step);
+  Serial.println(byte_value);
+}
+
+
+void log_process_signal(int signal){
+  if (current_touch_state < 4){
+    Serial.print("** touch ");
+  }
+  else{
+    Serial.print("** element reaction ");
+  }
+  Serial.print(current_touch_state);
+  Serial.print("recorded as ");
+  Serial.println(signal);
+}
+
 void process_signal(int signal){
+
+  if (debug){
+    log_process_signal(signal);
+  }
 
   // do something different depending on the current phase of the system:
   switch (current_touch_state) {
     case 1:    // was waiting for first signal
-      Serial.print("** touch 1 recorded as ");
-      Serial.println(signal);
       touch_1 = signal;
       trigger_led_strip(signal);
       break;
     case 2:    //
-      Serial.print("** touch 2 recorded as ");
-      Serial.println(signal);
       touch_2 = signal;
       trigger_led_strip(signal);
       break;
-    case 3:    //
-      Serial.print("** touch 3 recorded as ");
-      Serial.println(signal);
+    case 3:
       touch_3 = signal;
       trigger_led_strip(signal);
+
       // Send trigram to Serial
+      send_string_data_over_serial(1 + (current_trigram - 1) * 4, touch_1);
+      send_string_data_over_serial(2 + (current_trigram - 1) * 4, touch_2);
+      send_string_data_over_serial(3 + (current_trigram - 1) * 4, touch_3);
+
       trigger_element_action();
       break;
-    case 4:    //
-      Serial.print("** Element action finished, reaction recorded as ");
-      Serial.println(signal);
+    case 4:
       // Send element reaction to serial
+      send_string_data_over_serial(4 + (current_trigram - 1) * 4, signal);
       break;
   }
 
@@ -273,19 +316,21 @@ void process_signal(int signal){
     // update trigram
     current_trigram = current_trigram + 1;
     if (current_trigram > 2){
-      Serial.println(" ******** Returning to initial state, trigram 1 ********");
-      Serial.println();
+      if(debug){
+        Serial.println(" ******** Returning to initial state, trigram 1 ********");
+        Serial.println();
+      }
       current_trigram = 1;
       reset_system();
     }
     else{
-      Serial.println(" ***** Moving on to trigram 2");
+      if(debug){
+        Serial.println(" ***** Moving on to trigram 2");
+      }
     }
 
   }
 
-// spacing for clarity
-Serial.println();
 }
 
 void reset_system(){
@@ -300,35 +345,51 @@ void trigger_element_action(){
   // do something different depending on the element value:
   switch (element) {
     case 0:    // Heaven, 000, ???
-      Serial.println("000 element -- Heaven");
+      if(debug){
+        Serial.println("000 element -- Heaven");
+      }
       current_element_action_pin = FAN_OUT_1;
       break;
     case 1:    // Thunder, 001, sound file
-      Serial.println("001 element -- Thunder");
+      if(debug){
+       Serial.println("001 element -- Thunder");
+      }
       current_element_action_pin = FAN_OUT_1;
       break;
     case 2:    // Water, 010, pump
-      Serial.println("010 element -- Water");
+      if(debug){
+        Serial.println("010 element -- Water");
+      }
       current_element_action_pin = FAN_OUT_1;
       break;
     case 3:    // Lake, 011, pump?
-    Serial.println("011 element -- Lake");
+      if(debug){
+        Serial.println("011 element -- Lake");
+      }
       current_element_action_pin = FAN_OUT_1;
       break;
     case 4:    // Mountain, 100, ??
-      Serial.println("100 element -- Mountain");
+      if(debug){
+        Serial.println("100 element -- Mountain");
+      }
       current_element_action_pin = FAN_OUT_1;
       break;
     case 5:    // Fire , 101, LED ?
-    Serial.println("101 element -- Fire");
+      if(debug){
+        Serial.println("101 element -- Fire");
+      }
       current_element_action_pin = FAN_OUT_1;
       break;
     case 6:    // Wind, 110, Fan
-      Serial.println("110 element -- Wind");
+      if(debug){
+        Serial.println("110 element -- Wind");
+      }
       current_element_action_pin = FAN_OUT_1;
       break;
     case 7:    // Earth, 111, vibration
-      Serial.println("111 element -- Earth");
+      if(debug){
+        Serial.println("111 element -- Earth");
+      }
       current_element_action_pin = FAN_OUT_1;
       break;
   }
@@ -474,7 +535,7 @@ void get_brightness(){
     adc_val = sensor.sensor_value;
 
     // reset timeout if either signal exists
-    if (adc_val > adc_threshold){
+    if (adc_val > adc_threshold || adc_val < lo_signal_threshold){
       time_of_last_event = millis();
     }
 
