@@ -21,6 +21,8 @@ unsigned int hi_signal_threshold = 600;
 
 int show_sensor_value = 0;
 
+unsigned long time_between_trigrams_in_millis = 4000;
+
 // Set the method of analyzing analog bio-signal
 // 0 = Counting Peaks / Troughs
 // 1 = Average Amplitude of Peaks vs/ Troughs (not implemented)
@@ -46,6 +48,10 @@ BinaryOracleSensor sensor = BinaryOracleSensor(sensor_time_millis, lo_signal_thr
 int current_trigram = 1;
 // current_touch_state can be 1, 2, 3, 4
 int current_touch_state = 1;
+
+boolean sensor_paused;
+unsigned long start_pause_sensor_time_in_millis;
+unsigned long sensor_pause_duration = 4000;
 
 // LED parameters
 #define NUM_LEDS 150
@@ -206,8 +212,9 @@ void loop()
 {
 
   // reporting to serial output
-  if (debug){
+
     EVERY_N_MILLISECONDS(LOGGING_PERIOD_IN_MILLIS) {
+      if(debug && 0){
       Serial.print("Time since last event: ");
       Serial.println(millis_since_last_event);
       Serial.print("touchRead: ");
@@ -228,10 +235,12 @@ void loop()
 
   EVERY_N_MILLISECONDS(sensing_period_in_millis) {
     check_action();
-    sensor.check_binary_signal();
-    if (sensor.signal_finished){
-      sensor.signal_finished = 0;
-      process_signal(sensor.signal);
+    if(is_sensor_enabled()){
+      sensor.check_binary_signal();
+      if (sensor.signal_finished){
+        sensor.signal_finished = 0;
+        process_signal(sensor.signal);
+      }
     }
 
     show_treechi_lights();
@@ -249,6 +258,27 @@ void check_action(){
       element_action_is_on = 0;
     }
   }
+}
+
+void pause_sensor(unsigned long pause_in_millis){
+  sensor_paused = 1;
+  sensor_pause_duration = pause_in_millis;
+  start_pause_sensor_time_in_millis = millis();
+}
+
+boolean is_sensor_enabled(){
+
+  if(!sensor_paused){
+    return 1;
+  }
+
+  unsigned long current_time_in_millis = millis();
+  if(current_time_in_millis - start_pause_sensor_time_in_millis >= sensor_pause_duration){
+    sensor_paused = 0;
+    return 1;
+  }
+  // still paused
+  return 0;
 }
 
 int get_element_index_from_binary_values(int touch_1, int touch_2, int touch_3) {
@@ -309,7 +339,7 @@ void process_signal(int signal){
     case 4:
       // Send element reaction to serial
       send_string_data_over_serial(4 + (current_trigram - 1) * 4, signal);
-      //sensor.pause(time_between_trigrams_in_millis);
+      pause_sensor(6000);
       break;
   }
 
@@ -326,6 +356,7 @@ void process_signal(int signal){
         Serial.println();
       }
       current_trigram = 1;
+      pause_sensor(10000);
       reset_system();
     }
     else{
