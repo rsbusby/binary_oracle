@@ -203,7 +203,7 @@ void setup() {
   sensor.sensor_time_millis = sensor_time_millis;
   sensor.bio_signal_analysis_type = bio_signal_analysis_type;
   sensor.simulated_data = 0;
-  sensor.debug = debug;
+  sensor.debug = 1; //debug;
 
 }
 
@@ -338,6 +338,7 @@ void process_signal(int signal){
 
       // don't wait for a touch this time
       sensor.waiting = 0;
+      sensor.max_diff_millis = sensor.sensor_time_millis;
 
       break;
     case 4:
