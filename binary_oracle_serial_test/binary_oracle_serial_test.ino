@@ -12,22 +12,25 @@ void setup() {
 void loop()
 {
 
-    // get random values from 1 to 8
-    int element_1 = random(1,9);
-    int element_2 = random(1,9);
-
-    send_string_data_over_serial(element_1, 0);
+    // get random values
+    delay(2000);
+    send_string_data_over_serial(1, random(2));
+    send_string_data_over_serial(2, random(2));
+    send_string_data_over_serial(3, random(2));
     delay(3000);
-    send_string_data_over_serial(element_2, 1);
+    send_string_data_over_serial(4, random(2));
     delay(3000);
 
-
+    send_string_data_over_serial(5, random(2));
+    send_string_data_over_serial(6, random(2));
+    send_string_data_over_serial(7, random(2));
+    delay(3000);
+    send_string_data_over_serial(8, random(2));
+    delay(8000);
 }
 
-void send_string_data_over_serial(int byte_value, int sequence_step) {
+void send_string_data_over_serial(int sequence_step, int byte_value) {
   // Send two integers representing the elements, can be decoded by receiver
-  Serial.print("start");
   Serial.print(sequence_step);
-  Serial.print(byte_value);
-  Serial.println("end");
+  Serial.println(byte_value);
 }

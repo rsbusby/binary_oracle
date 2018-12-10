@@ -34,7 +34,7 @@ int hi_signal_threshold = 600;
 int sensor_values[600];
 int sensor_count = 0;
 
-int waiting = 1;
+int waiting;
 int start_detected = 0;
 int start_time_in_millis;
 int signal_finished = 0;
@@ -50,7 +50,13 @@ long current_time_in_millis;
 void setup() {
   Serial.begin(9600);
   delay(1000); // 2 second delay for recovery
-  Serial.println("Starting version 08: ");
+  Serial.println("Starting version 12: ");
+
+  current_time_in_millis = millis();
+  start_time_in_millis = millis();
+  waiting = 1;
+  max_diff_millis = millis_between_start_detections;
+
 }
 
 
@@ -83,6 +89,7 @@ void get_analog_value_and_add_to_time_series(){
     sensor_count += 1;
 
     if (show_sensor_value){
+      Serial.print("-- sensor input: ");
       Serial.println(sensor_value);
     }
 
@@ -99,10 +106,12 @@ void reset_time_series(){
 // changes program state depending on recent sensor values and time elapsed
 void check_binary_signal(){
 
+  current_time_in_millis = millis();
+
   if (waiting == 1){
     int started = check_start();
     if (started){
-      Serial.println("Detected signal!");
+      Serial.println("Detected touch!");
       waiting = 0;
       // set up for signal recording
       max_diff_millis = sensor_time_millis;
@@ -112,14 +121,14 @@ void check_binary_signal(){
   // waiting = 0, recording
     if(current_time_in_millis - start_time_in_millis < max_diff_millis){
       get_analog_value_and_add_to_time_series();
-      current_time_in_millis = millis();
+      // current_time_in_millis = millis();
     }
     else{
       // done listening, set up for start detection
       waiting = 1;
       max_diff_millis = millis_between_start_detections;
       start_time_in_millis = millis();
-      current_time_in_millis = millis();
+      // current_time_in_millis = millis();
 
       // get binary signal value
       signal_finished = 1;
@@ -177,10 +186,16 @@ void reset_signal_detection(){
 
 int check_start(){
 
+  // Serial.print("check_start:  ");
+
+  current_time_in_millis = millis();
+
+  // Serial.println(current_time_in_millis - start_time_in_millis);
+
   // if not done listening, record and keep going
   if(current_time_in_millis - start_time_in_millis < max_diff_millis){
+    // Serial.println("readin");
     get_analog_value_and_add_to_time_series();
-    current_time_in_millis = millis();
     return 0;
   }
 
@@ -199,6 +214,7 @@ int check_start(){
   }
   else{
     // detected a signal, but will wait one more cycle
+    Serial.println("Possible touch, debouncing");
     signal_detected_first = 1;
     reset_signal_detection();
     return 0;
