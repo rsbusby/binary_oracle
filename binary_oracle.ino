@@ -19,7 +19,7 @@ unsigned long millis_between_start_detections = 280;
 unsigned int lo_signal_threshold = 180;
 unsigned int hi_signal_threshold = 600;
 
-int show_sensor_value = 0;
+int show_sensor_value = 1;
 
 unsigned long time_between_trigrams_in_millis = 4000;
 
@@ -57,18 +57,18 @@ unsigned long sensor_pause_duration = 4000;
 #define NUM_LEDS 150
 #define NUM_LEDS_IN_SECTION 50
 #define NUM_STRIPS 2
-#define LED_DATA_PIN_1 16
-#define LED_DATA_PIN_2 17
+#define LED_DATA_PIN_1 15
+#define LED_DATA_PIN_2 16
 
 // Output pins
-#define FAN_OUT_1 18
-#define FAN_OUT_2 19
-#define TERRARIUM_OUT 20
-#define PUMP_OUT 21
-#define SERVO_OUT 22
+#define FAN_OUT_1 11
+#define FAN_OUT_2 10
+#define TERRARIUM_OUT 9
+#define PUMP_OUT 8
+#define SERVO_OUT 7
 
 // digital input pins for Azoteq sensors (note that analog input A0 is pin 14)
-#define AZOTEQ_PROX_PIN 17
+#define AZOTEQ_PROX_PIN 15
 #define AZOTEQ_TOUCH_PIN 16
 
 // LED strip properties
@@ -136,7 +136,7 @@ uint8_t max_brightness_active = 30;
 uint8_t min_brightness_standby = 3;
 uint8_t max_brightness_standby = 8;
 
-unsigned int LOGGING_PERIOD_IN_MILLIS = 400;  // not too small, around 500 is good
+unsigned int LOGGING_PERIOD_IN_MILLIS = 700;  // not too small, around 500 is good
 unsigned int SENSING_PERIOD_IN_MILLIS = 40;  // 40 works
   // 40 works
 unsigned int LOOP_DELAY_IN_MILLIS = 0;  // delay for every loop 10 works, do we even need this when installed?
@@ -214,7 +214,8 @@ void loop()
   // reporting to serial output
 
     EVERY_N_MILLISECONDS(LOGGING_PERIOD_IN_MILLIS) {
-      if(debug && 0){
+       if(debug && 0){
+       //if(debug){
         log_treechi();
     }
   }
