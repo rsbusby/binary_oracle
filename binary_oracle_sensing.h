@@ -11,7 +11,6 @@ class BinaryOracleSensor
       int start_detected = 0;
       int start_time_in_millis;
 
-
       boolean signal_detected_first = false;
 
       unsigned long max_diff_millis;
