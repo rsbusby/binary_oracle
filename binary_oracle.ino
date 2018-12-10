@@ -215,21 +215,7 @@ void loop()
 
     EVERY_N_MILLISECONDS(LOGGING_PERIOD_IN_MILLIS) {
       if(debug && 0){
-      Serial.print("Time since last event: ");
-      Serial.println(millis_since_last_event);
-      Serial.print("touchRead: ");
-     Serial.println(touchread);
-     Serial.print("Analog: ");
-     Serial.println(adc_val);
-     //Serial.print("FastLED Brightness Level: ");
-     //Serial.println(255); // current_brightness);
-     //Serial.print("Hue: ");
-     //Serial.println(current_hue);
-     Serial.print("Current Max Brightness: ");
-     Serial.println(max_brightness);
-     Serial.print("is active: ");
-     Serial.println(is_active);
-     Serial.println();
+        log_treechi();
     }
   }
 
@@ -292,6 +278,23 @@ void send_string_data_over_serial(int sequence_step, int byte_value) {
   Serial.println(byte_value);
 }
 
+void log_treechi(){
+  Serial.print("Time since last event: ");
+  Serial.println(millis_since_last_event);
+  Serial.print("touchRead: ");
+  Serial.println(touchread);
+  Serial.print("Analog: ");
+  Serial.println(adc_val);
+   //Serial.print("FastLED Brightness Level: ");
+   //Serial.println(255); // current_brightness);
+   //Serial.print("Hue: ");
+   //Serial.println(current_hue);
+  Serial.print("Current Max Brightness: ");
+  Serial.println(max_brightness);
+  Serial.print("is active: ");
+  Serial.println(is_active);
+  Serial.println();
+}
 
 void log_process_signal(int signal){
   if (current_touch_state < 4){
