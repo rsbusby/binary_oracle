@@ -11,7 +11,7 @@ class BinaryOracleSensor
       int start_detected = 0;
       int start_time_in_millis;
 
-      boolean signal_detected_first = false;
+      boolean signal_detected_first = true;
 
       unsigned long max_diff_millis;
       unsigned long current_time_in_millis;
@@ -185,24 +185,27 @@ int check_start(){
   int signal_detected = detect_signal_in_time_series();
 
   if ( ! signal_detected ){
-    signal_detected_first = 0;
-    reset_signal_detection();
-    return 0;
-  }
-  if (signal_detected_first){
-      signal_detected_first = 0;
-      // don't reset sensor data, keep the last period
-      return 1;
-  }
-  else{
-    // detected a signal, but will wait one more cycle
-    if (debug){
-      Serial.println("          ++ Possible touch, debouncing ++");
-    }
     signal_detected_first = 1;
     reset_signal_detection();
     return 0;
   }
+  if (signal_detected_first){
+      signal_detected_first = 1;
+      // don't reset sensor data, keep the last period
+      return 1;
+  }
+
+  return 0;
+
+  // else{
+  //   // detected a signal, but will wait one more cycle
+  //   if (debug){
+  //     Serial.println("          ++ Possible touch, debouncing ++");
+  //   }
+  //   signal_detected_first = 1;
+  //   reset_signal_detection();
+  //   return 0;
+  // }
 }
 
 
