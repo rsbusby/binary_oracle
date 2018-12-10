@@ -196,7 +196,7 @@ void setup() {
   FastLED.setBrightness(100);
 
   // sensor parameters
-  sensor.show_sensor_value = 0;
+  sensor.show_sensor_value = 1;
   sensor.lo_signal_threshold = lo_signal_threshold;
   sensor.hi_signal_threshold = hi_signal_threshold;
   sensor.millis_between_start_detections = millis_between_start_detections;
@@ -230,7 +230,7 @@ void loop()
       }
     }
 
-    show_treechi_lights();
+    // show_treechi_lights();
     FastLED.show();
   }
 
