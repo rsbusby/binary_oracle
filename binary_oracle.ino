@@ -339,6 +339,8 @@ void process_signal(int signal){
     case 4:
       // Send element reaction to serial
       send_string_data_over_serial(4 + (current_trigram - 1) * 4, signal);
+
+      // pause sensor but keep background lighting going
       pause_sensor(6000);
       break;
   }
@@ -356,7 +358,9 @@ void process_signal(int signal){
         Serial.println();
       }
       current_trigram = 1;
-      pause_sensor(10000);
+
+      // pause everything for a bit
+      delay(10000);
       reset_system();
     }
     else{
