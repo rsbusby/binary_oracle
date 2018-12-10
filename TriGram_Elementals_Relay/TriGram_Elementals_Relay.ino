@@ -12,7 +12,7 @@
 const int TOUCH_PIN = 15; //azotek
 
 const int pwPin1_wind = 14;  // digital pin 4, goes to sonar sensor's pin 2
-const int transistorPin_wind = 19;    // connected to the base of the fan transistor
+const int transistorPin_wind = 22;    // connected to the base of the fan transistor
 long sensor_wind, mm_wind, inches_wind;  // data from sonar sensor
 
 bool lightning_enabled = 1;
