@@ -1,3 +1,5 @@
+#define NUM_SENSOR_VALUES 600
+
 
 // sensing from the analogInput pin for the binary Oracle
 class BinaryOracleSensor
@@ -5,15 +7,14 @@ class BinaryOracleSensor
 
       // to be private?
       // array for sensor values
-      int sensor_values[600];
+      int sensor_values[NUM_SENSOR_VALUES];
       int sensor_count = 0;
 
       int start_detected = 0;
-      int start_time_in_millis;
+      unsigned long start_time_in_millis;
 
       boolean signal_detected_first = true;
 
-      unsigned long max_diff_millis;
       unsigned long current_time_in_millis;
 
 public:
@@ -23,6 +24,8 @@ public:
 
   int sensor_value;
   int waiting;
+
+  unsigned long max_diff_millis;
 
   // how often we poll the bio-signal
   // int sensing_period_in_millis = 100;
@@ -91,13 +94,21 @@ public:
      else{
        // done listening, set up for start detection
        waiting = 1;
+
        max_diff_millis = millis_between_start_detections;
-       start_time_in_millis = millis();
-       // current_time_in_millis = millis();
 
        // get binary signal value
        signal_finished = 1;
+
+       if(debug && 0){
+         Serial.print("sensor count: ");
+         Serial.println(sensor_count);
+       }
        signal = get_binary_from_time_series();
+
+       reset_signal_detection();
+
+
      }
    }
  }
@@ -112,6 +123,12 @@ void get_analog_value_and_add_to_time_series(){
     sensor_value = analogRead(A0);
     sensor_values[sensor_count] = sensor_value;
     sensor_count += 1;
+    if (sensor_count == NUM_SENSOR_VALUES){
+      if(debug){
+        Serial.println("OUT OF MEMORY");
+      }
+      sensor_count = 0;
+    }
 
     if (show_sensor_value and debug){
       Serial.print("  -- sensor input: ");
