@@ -5,7 +5,7 @@ class BinaryOracleSensor
 
       // to be private?
       // array for sensor values
-      int sensor_values[600];
+      int sensor_values[200];
       int sensor_count = 0;
 
       int start_detected = 0;
