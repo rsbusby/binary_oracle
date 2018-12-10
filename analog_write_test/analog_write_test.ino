@@ -3,7 +3,7 @@
 // --- PARAMETERS TO ADJUST ---------
 
 // output pin to action
-const int transistorPin_test = 9;
+const int transistorPin_test = 13;
 
 // set the value to write, between 0 and 255
 int analog_write_value = 255;
