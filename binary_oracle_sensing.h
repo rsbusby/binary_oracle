@@ -49,7 +49,7 @@ public:
   // 2 = mock random values
   int bio_signal_analysis_type = 0;
 
-  boolean debug = true;
+  boolean debug = 1;
 
   // Constructor - creates a BinaryOracleSensor
  // and initializes the member variables and state

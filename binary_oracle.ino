@@ -4,7 +4,7 @@
 
 // ----------------------------------
 // --- PARAMETERS TO ADJUST ---------
-boolean debug = true;
+boolean debug = 0;
 
 // how often we poll the bio-signal
 int sensing_period_in_millis = 100;
@@ -17,7 +17,7 @@ unsigned long millis_between_start_detections = 280;
 
 // low and high threshold for a signal to be detected
 unsigned int lo_signal_threshold = 180;
-unsigned int hi_signal_threshold = 600;
+unsigned int hi_signal_threshold = 650;
 
 int show_sensor_value = 1;
 
@@ -61,15 +61,15 @@ unsigned long sensor_pause_duration = 4000;
 #define LED_DATA_PIN_2 16
 
 // Output pins
-#define FAN_OUT_1 11
-#define FAN_OUT_2 10
+#define FAN_OUT 17
+#define UV_LED_OUT 10
 #define TERRARIUM_OUT 9
 #define PUMP_OUT 8
-#define SERVO_OUT 7
+#define FIRE_LED_OUT 7
 
 // digital input pins for Azoteq sensors (note that analog input A0 is pin 14)
-#define AZOTEQ_PROX_PIN 15
-#define AZOTEQ_TOUCH_PIN 16
+#define AZOTEQ_PROX_PIN 22
+#define AZOTEQ_TOUCH_PIN 23
 
 // LED strip properties
 #define LED_TYPE WS2811
@@ -393,49 +393,49 @@ void trigger_element_action(){
       if(debug){
         Serial.println("000 element -- Heaven");
       }
-      current_element_action_pin = FAN_OUT_1;
+      current_element_action_pin = FAN_OUT;
       break;
     case 1:    // Thunder, 001, sound file
       if(debug){
        Serial.println("001 element -- Thunder");
       }
-      current_element_action_pin = FAN_OUT_1;
+      current_element_action_pin = FAN_OUT;
       break;
     case 2:    // Water, 010, pump
       if(debug){
         Serial.println("010 element -- Water");
       }
-      current_element_action_pin = FAN_OUT_1;
+      current_element_action_pin = FAN_OUT;
       break;
     case 3:    // Lake, 011, pump?
       if(debug){
         Serial.println("011 element -- Lake");
       }
-      current_element_action_pin = FAN_OUT_1;
+      current_element_action_pin = FAN_OUT;
       break;
     case 4:    // Mountain, 100, ??
       if(debug){
         Serial.println("100 element -- Mountain");
       }
-      current_element_action_pin = FAN_OUT_1;
+      current_element_action_pin = FAN_OUT;
       break;
     case 5:    // Fire , 101, LED ?
       if(debug){
         Serial.println("101 element -- Fire");
       }
-      current_element_action_pin = FAN_OUT_1;
+      current_element_action_pin = FAN_OUT;
       break;
     case 6:    // Wind, 110, Fan
       if(debug){
         Serial.println("110 element -- Wind");
       }
-      current_element_action_pin = FAN_OUT_1;
+      current_element_action_pin = FAN_OUT;
       break;
     case 7:    // Earth, 111, vibration
       if(debug){
         Serial.println("111 element -- Earth");
       }
-      current_element_action_pin = FAN_OUT_1;
+      current_element_action_pin = FAN_OUT;
       break;
   }
 
