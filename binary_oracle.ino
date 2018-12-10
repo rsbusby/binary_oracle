@@ -61,11 +61,11 @@ unsigned long sensor_pause_duration = 4000;
 #define LED_DATA_PIN_2 16
 
 // Output pins
-#define FAN_OUT 17
-#define UV_LED_OUT 10
 #define TERRARIUM_OUT 9
-#define PUMP_OUT 8
-#define FIRE_LED_OUT 7
+#define FAN_OUT 17
+#define PUMP_OUT 18
+#define UV_LED_OUT 19
+#define FIRE_LED_OUT 20
 
 // digital input pins for Azoteq sensors (note that analog input A0 is pin 14)
 #define AZOTEQ_PROX_PIN 22
