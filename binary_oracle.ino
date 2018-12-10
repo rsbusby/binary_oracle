@@ -389,41 +389,41 @@ void trigger_element_action(){
 
   // do something different depending on the element value:
   switch (element) {
-    case 0:    // Heaven, 000, ???
+    case 0:    // Heaven, 000, UV LED 
       if(debug){
         Serial.println("000 element -- Heaven");
       }
-      current_element_action_pin = FAN_OUT;
+      current_element_action_pin = UV_LED_OUT;
       break;
-    case 1:    // Thunder, 001, sound file
+    case 1:    // Thunder, 001, Sound
       if(debug){
        Serial.println("001 element -- Thunder");
       }
-      current_element_action_pin = FAN_OUT;
+  //    current_element_action_pin = FAN_OUT;
       break;
-    case 2:    // Water, 010, pump
+    case 2:    // Water, 010, Pump
       if(debug){
         Serial.println("010 element -- Water");
       }
-      current_element_action_pin = FAN_OUT;
+      current_element_action_pin = PUMP_OUT;
       break;
-    case 3:    // Lake, 011, pump?
+    case 3:    // Lake, 011, Pump
       if(debug){
         Serial.println("011 element -- Lake");
       }
-      current_element_action_pin = FAN_OUT;
+      current_element_action_pin = PUMP_OUT;
       break;
-    case 4:    // Mountain, 100, ??
+    case 4:    // Mountain, 100, Sound
       if(debug){
         Serial.println("100 element -- Mountain");
       }
-      current_element_action_pin = FAN_OUT;
+//      current_element_action_pin = FAN_OUT;
       break;
-    case 5:    // Fire , 101, LED ?
+    case 5:    // Fire , 101, Fire LED 
       if(debug){
         Serial.println("101 element -- Fire");
       }
-      current_element_action_pin = FAN_OUT;
+      current_element_action_pin = FIRE_LED_OUT;
       break;
     case 6:    // Wind, 110, Fan
       if(debug){
@@ -431,11 +431,11 @@ void trigger_element_action(){
       }
       current_element_action_pin = FAN_OUT;
       break;
-    case 7:    // Earth, 111, vibration
+    case 7:    // Earth, 111, Sound
       if(debug){
         Serial.println("111 element -- Earth");
       }
-      current_element_action_pin = FAN_OUT;
+ //     current_element_action_pin = FAN_OUT;
       break;
   }
 
