@@ -4,7 +4,7 @@
 
 // ----------------------------------
 // --- PARAMETERS TO ADJUST ---------
-boolean debug = 0;
+boolean debug = 1;
 
 // how often we poll the bio-signal
 int sensing_period_in_millis = 100;
@@ -196,7 +196,7 @@ void setup() {
   FastLED.setBrightness(100);
 
   // sensor parameters
-  sensor.show_sensor_value = 1;
+  sensor.show_sensor_value = 0;
   sensor.lo_signal_threshold = lo_signal_threshold;
   sensor.hi_signal_threshold = hi_signal_threshold;
   sensor.millis_between_start_detections = millis_between_start_detections;
@@ -241,6 +241,10 @@ void check_action(){
   if(element_action_is_on){
     unsigned long current_time_in_millis = millis();
     if(current_time_in_millis - element_start_time_in_millis > element_action_duration){
+      if(debug){
+        Serial.print("Turning off analog output pin ");
+        Serial.println(current_element_action_pin);
+      }
       analogWrite(current_element_action_pin, 0);
       element_action_is_on = 0;
     }
@@ -383,13 +387,14 @@ void reset_system(){
   // anything else?
 }
 
+
 void trigger_element_action(){
 
   int element = get_element_index_from_binary_values(touch_1, touch_2, touch_3);
 
   // do something different depending on the element value:
   switch (element) {
-    case 0:    // Heaven, 000, UV LED 
+    case 0:    // Heaven, 000, UV LED
       if(debug){
         Serial.println("000 element -- Heaven");
       }
@@ -399,8 +404,8 @@ void trigger_element_action(){
       if(debug){
        Serial.println("001 element -- Thunder");
       }
-  //    current_element_action_pin = FAN_OUT;
-      break;
+      element_action_is_on = 0;
+      return;
     case 2:    // Water, 010, Pump
       if(debug){
         Serial.println("010 element -- Water");
@@ -417,14 +422,15 @@ void trigger_element_action(){
       if(debug){
         Serial.println("100 element -- Mountain");
       }
-//      current_element_action_pin = FAN_OUT;
-      break;
-    case 5:    // Fire , 101, Fire LED 
+      element_action_is_on = 0;
+      return;
+    case 5:    // Fire , 101, Fire LED
       if(debug){
         Serial.println("101 element -- Fire");
       }
-      current_element_action_pin = FIRE_LED_OUT;
-      break;
+      // TODO: implement fire
+      element_action_is_on = 0;
+      return;
     case 6:    // Wind, 110, Fan
       if(debug){
         Serial.println("110 element -- Wind");
@@ -436,9 +442,14 @@ void trigger_element_action(){
         Serial.println("111 element -- Earth");
       }
  //     current_element_action_pin = FAN_OUT;
-      break;
+      element_action_is_on = 0;
+      return;
   }
 
+  if(debug){
+    Serial.print("Turning on output pin ");
+    Serial.println(current_element_action_pin);
+  }
   analogWrite(current_element_action_pin, element_action_write_value);
   element_action_is_on = 1;
   element_start_time_in_millis = millis();
