@@ -54,14 +54,14 @@ unsigned long start_pause_sensor_time_in_millis;
 unsigned long sensor_pause_duration = 4000;
 
 // LED parameters
-#define NUM_LEDS 150
-#define NUM_LEDS_IN_SECTION 50
+#define NUM_LEDS 120
+#define NUM_LEDS_IN_SECTION 60
 #define NUM_STRIPS 2
 #define LED_DATA_PIN_1 15
 #define LED_DATA_PIN_2 16
 
 // Output pins
-#define TERRARIUM_OUT 9
+
 #define FAN_OUT 17
 #define PUMP_OUT 18
 #define UV_LED_OUT 19
@@ -73,14 +73,14 @@ unsigned long sensor_pause_duration = 4000;
 
 // LED strip properties
 #define LED_TYPE WS2811
-#define COLOR_ORDER GRB
+#define COLOR_ORDER BRG
 
 // initialize FastLED strips
 CRGB leds[NUM_STRIPS][NUM_LEDS];
 
 unsigned long element_start_time_in_millis;
 boolean element_action_is_on = 0;
-int current_element_action_pin = TERRARIUM_OUT;
+int current_element_action_pin;
 
 int touch_1;
 int touch_2;
@@ -185,10 +185,18 @@ CRGBPalette16 gTargetPalette( CRGB::Blue);
 // end TreeChi
 
 void setup() {
+  
+  pinMode(FAN_OUT, OUTPUT);
+  analogWrite(FAN_OUT, 0);
+  pinMode(PUMP_OUT, OUTPUT);
+  analogWrite(PUMP_OUT, 0);
+  pinMode(UV_LED_OUT, OUTPUT);
+  analogWrite(UV_LED_OUT, 0);
+  // tell FastLED about the LED strip configuration
+  
   Serial.begin(115200);
   delay(1000); // 2 second delay for recovery
 
-  // tell FastLED about the LED strip configuration
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS);
 
@@ -196,7 +204,7 @@ void setup() {
   FastLED.setBrightness(100);
 
   // sensor parameters
-  sensor.show_sensor_value = 0;
+  sensor.show_sensor_value = 1;
   sensor.lo_signal_threshold = lo_signal_threshold;
   sensor.hi_signal_threshold = hi_signal_threshold;
   sensor.millis_between_start_detections = millis_between_start_detections;

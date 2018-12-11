@@ -26,27 +26,27 @@ void setup() {
 // main loop
 void loop()
 {
-  // cycle on and off
-  analogWrite(transistorPin_test, analog_write_value);
-  Serial.println("On");
-  delay(3000);
-  analogWrite(transistorPin_test, 0);
-  Serial.println("Off");
-  delay(9000);
+//  // cycle on and off
+//  analogWrite(transistorPin_test, analog_write_value);
+//  Serial.println("On");
+//  delay(3000);
+//  analogWrite(transistorPin_test, 0);
+//  Serial.println("Off");
+//  delay(1000);
 
   // cycle on and off
   analogWrite(transistorPin2_test, analog_write_value);
   Serial.println("On");
-  delay(3000);
+  delay(500);
   analogWrite(transistorPin2_test, 0);
   Serial.println("Off");
-  delay(3000);
-
-    // cycle on and off
-  analogWrite(transistorPin3_test, analog_write_value);
-  Serial.println("On");
-  delay(3000);
-  analogWrite(transistorPin3_test, 0);
-  Serial.println("Off");
-  delay(6000);
+  delay(500);
+//
+//    // cycle on and off
+//  analogWrite(transistorPin3_test, analog_write_value);
+//  Serial.println("On");
+//  delay(3000);
+//  analogWrite(transistorPin3_test, 0);
+//  Serial.println("Off");
+//  delay(6000);
 }
