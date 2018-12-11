@@ -546,14 +546,16 @@ void show_treechi_lights_for_section(int strip_index, int start_pixel){
     // Serial.print(", start_pixel ");
     // Serial.println(start_pixel);
 
-    int end_pixel = start_pixel + NUM_LEDS_IN_SECTION;
-    for( int i = start_pixel; i < end_pixel; i++) {
+    for( int i = 0; i < NUM_LEDS_IN_SECTION; i++) {
 
        if (led_boost[i] > 0){
           led_boost[i] -= 1;
         }
+
        uint8_t hue = hue_before_boost + led_boost[i] / 2;
-       leds[strip_index][i] = ColorFromPalette( gCurrentPalette, hue, relative_brightnesses[i], LINEARBLEND);
+
+       // we are shifting by start pixel
+       leds[strip_index][start_pixel + i] = ColorFromPalette( gCurrentPalette, hue, relative_brightnesses[i], LINEARBLEND);
      }
 }
 
