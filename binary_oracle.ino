@@ -54,11 +54,16 @@ unsigned long start_pause_sensor_time_in_millis;
 unsigned long sensor_pause_duration = 4000;
 
 // LED parameters
-#define NUM_LEDS 120
-#define NUM_LEDS_IN_SECTION 60
+#define NUM_LEDS 60
+#define NUM_LEDS_IN_SECTION 20
 #define NUM_STRIPS 2
 #define LED_DATA_PIN_1 15
 #define LED_DATA_PIN_2 16
+
+// where do sections begin (set manually if NUM_LEDS is not perfectly divisible by 3)
+int start_section_1 = 0;
+int start_section_2 = NUM_LEDS_IN_SECTION;
+int start_section_3 = NUM_LEDS_IN_SECTION * 2;
 
 // Output pins
 
@@ -185,7 +190,7 @@ CRGBPalette16 gTargetPalette( CRGB::Blue);
 // end TreeChi
 
 void setup() {
-  
+
   pinMode(FAN_OUT, OUTPUT);
   analogWrite(FAN_OUT, 0);
   pinMode(PUMP_OUT, OUTPUT);
@@ -193,7 +198,7 @@ void setup() {
   pinMode(UV_LED_OUT, OUTPUT);
   analogWrite(UV_LED_OUT, 0);
   // tell FastLED about the LED strip configuration
-  
+
   Serial.begin(115200);
   delay(1000); // 2 second delay for recovery
 
@@ -471,7 +476,7 @@ void trigger_led_strip(int signal){
 
   // initialize for current_touch_state == 1, to avoid compiler warnings
   int start_pixel = 0;
-  int end_pixel = 50;
+  int end_pixel = NUM_LEDS_IN_SECTION;
   CRGB color = CRGB::Yellow;
   CRGB gap_color = global_gap_color;
 
@@ -481,18 +486,18 @@ void trigger_led_strip(int signal){
   // determine which pixels to change, and what color
   switch (current_touch_state) {
      case 1:    //
-       start_pixel = 0;
-       end_pixel = 50;
+       start_pixel = start_section_1;
+       end_pixel = start_section_1 + NUM_LEDS_IN_SECTION;
        color = CRGB::Red;
        break;
     case 2:    //
-      start_pixel = 50;
-      end_pixel = 100;
+      start_pixel = start_section_2;
+      end_pixel = start_section_2 + NUM_LEDS_IN_SECTION;
       color = CRGB::Blue;
       break;
     case 3:    //
-      start_pixel = 100;
-      end_pixel = 150;
+      start_pixel = start_section_3;
+      end_pixel = start_section_3 + NUM_LEDS_IN_SECTION;
       color = CRGB::Green;
       break;
   }
@@ -549,10 +554,10 @@ void light_one(int strip_index, int start_pixel, int end_pixel, CRGB color){
 void show_treechi_lights_for_section(int strip_index, int start_pixel){
 
     // DEBUG printing
-    // Serial.print("Lighting TreeChi-style for strip ");
-    // Serial.print(strip_index);
-    // Serial.print(", start_pixel ");
-    // Serial.println(start_pixel);
+    Serial.print("Lighting TreeChi-style for strip ");
+    Serial.print(strip_index);
+    Serial.print(", start_pixel ");
+    Serial.println(start_pixel);
 
     for( int i = 0; i < NUM_LEDS_IN_SECTION; i++) {
 
@@ -574,9 +579,9 @@ void show_treechi_lights(){
 
   if(current_trigram == 1){
     // if on first trigram, show TreeChi for entire 2nd trigram
-    show_treechi_lights_for_section(1, 0);
-    show_treechi_lights_for_section(1, 50);
-    show_treechi_lights_for_section(1, 100);
+    show_treechi_lights_for_section(1, start_section_1);
+    show_treechi_lights_for_section(1, start_section_2);
+    show_treechi_lights_for_section(1, start_section_3);
   }
 
   // now set up for partial strip
@@ -586,13 +591,13 @@ void show_treechi_lights(){
   }
 
   if(current_touch_state < 2){
-    show_treechi_lights_for_section(strip_index, 0);
+    show_treechi_lights_for_section(strip_index, start_section_1);
   }
   if (current_touch_state < 3){
-    show_treechi_lights_for_section(strip_index, 50);
+    show_treechi_lights_for_section(strip_index, start_section_2);
   }
   if (current_touch_state < 4){
-    show_treechi_lights_for_section(strip_index, 100);
+    show_treechi_lights_for_section(strip_index, start_section_3);
   }
 }
 
