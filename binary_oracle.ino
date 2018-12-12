@@ -54,13 +54,18 @@ unsigned long start_pause_sensor_time_in_millis;
 unsigned long sensor_pause_duration = 4000;
 
 // LED parameters
-#define NUM_LEDS 60
+#define NUM_LEDS 120
 #define NUM_LEDS_IN_SECTION 20
-#define NUM_STRIPS 2
+#define NUM_STRIPS 1
 #define LED_DATA_PIN_1 15
 #define LED_DATA_PIN_2 16
 
-// where do sections begin (set manually if NUM_LEDS is not perfectly divisible by 3)
+
+int num_effective_pixels_in_trigram = NUM_LEDS / 2;
+
+int start_trigram_2 = num_effective_pixels_in_trigram;
+
+// where do sections begin
 int start_section_1 = 0;
 int start_section_2 = NUM_LEDS_IN_SECTION;
 int start_section_3 = NUM_LEDS_IN_SECTION * 2;
@@ -480,8 +485,10 @@ void trigger_led_strip(int signal){
   CRGB color = CRGB::Yellow;
   CRGB gap_color = global_gap_color;
 
+  int single_strip_shift = (current_trigram - 1) * num_effective_pixels_in_trigram;
+
   // strip index is 0 or 1
-  int current_strip_index = current_trigram - 1;
+  int current_strip_index = 0; // 0 means single strip //current_trigram - 1;
 
   // determine which pixels to change, and what color
   switch (current_touch_state) {
@@ -553,11 +560,15 @@ void light_one(int strip_index, int start_pixel, int end_pixel, CRGB color){
 // from TreeChi
 void show_treechi_lights_for_section(int strip_index, int start_pixel){
 
+    int single_strip_start_pixel = strip_index * num_effective_pixels_in_trigram + start_pixel;
+
     // DEBUG printing
     Serial.print("Lighting TreeChi-style for strip ");
     Serial.print(strip_index);
     Serial.print(", start_pixel ");
     Serial.println(start_pixel);
+
+
 
     for( int i = 0; i < NUM_LEDS_IN_SECTION; i++) {
 
@@ -568,7 +579,7 @@ void show_treechi_lights_for_section(int strip_index, int start_pixel){
        uint8_t hue = hue_before_boost + led_boost[i] / 2;
 
        // we are shifting by start pixel
-       leds[strip_index][start_pixel + i] = ColorFromPalette( gCurrentPalette, hue, relative_brightnesses[i], LINEARBLEND);
+       leds[0][single_strip_start_pixel + i] = ColorFromPalette( gCurrentPalette, hue, relative_brightnesses[i], LINEARBLEND);
      }
 }
 
