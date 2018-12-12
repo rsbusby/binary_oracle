@@ -10,13 +10,13 @@ boolean debug = 1;
 int sensing_period_in_millis = 100;
 
 // milliseconds for sensing and recording
-// int sensor_time_millis = 2000;
+int sensor_time_millis = 2000;
 
 // time to record sensor values when waiting for signal (takes 2 to start)
 // unsigned long millis_between_start_detections = 280;
 
 // low and high threshold for a signal to be detected
-// unsigned int lo_signal_threshold = 180;
+unsigned int lo_signal_threshold = 180;
 // unsigned int hi_signal_threshold = 650;
 
 // unsigned long time_between_trigrams_in_millis = 4000;
@@ -39,7 +39,7 @@ CRGB global_gap_color = CRGB::White; // Use Black for dark pixels
 // --- END PARAMETERS TO ADJUST -----
 // ----------------------------------
 
-BinaryOracleSensor sensor = BinaryOracleSensor(sensor_time_millis, lo_signal_threshold, hi_signal_threshold, bio_signal_analysis_type);
+BinaryOracleSensor sensor = BinaryOracleSensor(2000, 180, 650, 0);
 
 // current state of system is denoted by 2 variables
 // current trigram can be 1 or 2
@@ -213,7 +213,7 @@ void setup() {
   sensor.hi_signal_threshold = 650;
   sensor.millis_between_start_detections = 280;
   sensor.sensor_time_millis = 2000;
-  sensor.bio_signal_analysis_type = bio_signal_analysis_type;
+  sensor.bio_signal_analysis_type = 0;
   sensor.simulated_data = 0;
   sensor.debug = 1; //debug;
 
