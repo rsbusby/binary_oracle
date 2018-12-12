@@ -493,18 +493,18 @@ void trigger_led_strip(int signal){
   // determine which pixels to change, and what color
   switch (current_touch_state) {
      case 1:    //
-       start_pixel = start_section_1;
-       end_pixel = start_section_1 + NUM_LEDS_IN_SECTION;
+       start_pixel = start_section_1 + single_strip_shift;
+       end_pixel = start_pixel + NUM_LEDS_IN_SECTION;
        color = CRGB::Red;
        break;
     case 2:    //
-      start_pixel = start_section_2;
-      end_pixel = start_section_2 + NUM_LEDS_IN_SECTION;
+      start_pixel = start_section_2 + single_strip_shift;
+      end_pixel = start_pixel + NUM_LEDS_IN_SECTION;
       color = CRGB::Blue;
       break;
     case 3:    //
-      start_pixel = start_section_3;
-      end_pixel = start_section_3 + NUM_LEDS_IN_SECTION;
+      start_pixel = start_section_3 + single_strip_shift;
+      end_pixel = start_pixel + NUM_LEDS_IN_SECTION;
       color = CRGB::Green;
       break;
   }
