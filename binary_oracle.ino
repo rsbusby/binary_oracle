@@ -202,9 +202,9 @@ void setup() {
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
   // FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS);
 
-  for(uint16_t i=0;i<NUM_LEDS;i++){
-    leds[0][i] = CRGB::Black;
-  }
+//  for(uint16_t i=0;i<NUM_LEDS;i++){
+//    leds[0][i] = CRGB::Black;
+//  }
 
   // set master brightness control
   FastLED.setBrightness(100);
@@ -217,7 +217,7 @@ void setup() {
   sensor.sensor_time_millis = 2000;
   sensor.bio_signal_analysis_type = 0;
   sensor.simulated_data = 0;
-  sensor.debug = 1; //debug;
+  sensor.debug = 0; //debug;
 
 }
 
