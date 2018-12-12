@@ -202,6 +202,10 @@ void setup() {
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
   // FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS);
 
+  for(uint16_t i=0;i<NUM_LEDS;i++){
+    leds[0][i] = CRGB::Black;
+  }
+
   // set master brightness control
   FastLED.setBrightness(100);
 
