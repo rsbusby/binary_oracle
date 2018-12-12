@@ -88,104 +88,6 @@ uint8_t touch_1;
 uint8_t touch_2;
 uint8_t touch_3;
 
-// ---------- from TreeChi ----------------------------
-
-// Gradient palette "Green_White_gp"
-DEFINE_GRADIENT_PALETTE( Green_White_gp ) {
-    0,   0,255,  0,
-  127,  42,255, 45,
-  255, 255,255,255};
-
-// Gradient palette "Magenta_White_gp"
-DEFINE_GRADIENT_PALETTE( Magenta_White_gp ) {
-    0, 255,  0,255,
-  127, 255, 55,255,
-  255, 255,255,255};
-
-CRGBPalette16 standby_palette(Green_White_gp);
-CRGBPalette16 active_palette(Magenta_White_gp);
-
-uint8_t MAX_PALETTE_CHANGES_PER_BLEND = 36;
-
-// maximum analog signal value
-#define MAX_ANALOG  1024
-
-uint8_t new_brightness;
-uint8_t exp_brightness;
-
-// analog event threshold
-volatile unsigned int adc_threshold = 800;
-
-// time of increased brightness after signal, in milliseconds.
-unsigned long TIMEOUT_MILLIS = sensor_time_millis;
-
-// twinkle boost
-uint8_t twinkle_boost;
-uint8_t twinkle_boost_standby = 90;
-uint8_t twinkle_boost_active = 200;
-
-uint8_t hue_before_boost;
-uint8_t hue_before_boost_active = 100;
-uint8_t hue_before_boost_standby = 40;
-
-#define CHANCE_OF_TWINKLE 96
-
-// brightness range active, after signal
-uint8_t min_brightness_active = 5;
-uint8_t max_brightness_active = 30;
-
-// brightness range inactive (if want dark after installation, set both to 0)
-uint8_t min_brightness_standby = 3;
-uint8_t max_brightness_standby = 8;
-
-unsigned int LOGGING_PERIOD_IN_MILLIS = 700;  // not too small, around 500 is good
-unsigned int SENSING_PERIOD_IN_MILLIS = 40;  // 40 works
-  // 40 works
-unsigned int LOOP_DELAY_IN_MILLIS = 0;  // delay for every loop 10 works, do we even need this when installed?
-
-
-uint8_t num_blending_calls_to_active = 8;
-uint8_t num_blending_calls_to_standby = 6;
-
-uint8_t blending_period_to_active = 2;
-uint8_t blending_period_to_standby = 2;
-
-
-// --- END ADJUSTABLE PARAMETERS for TreeChi
-
-uint8_t NUM_BLENDING_CALLS_PER_LOOP = 1;
-uint8_t BLENDING_PERIOD_IN_MILLIS = 40;
-
-// testing by simulating a changing analog signal
-uint8_t fake_analog_increment = 2;
-
-uint16_t active_pixel = 0;
-
-// timing and sensor variables
-uint16_t adc_val;
-// int touchread;
-uint8_t current_brightness;
-uint8_t current_hue;
-
-unsigned int brightness_gain_from_adc = 1.0;
-unsigned int min_brightness = 80;
-unsigned int max_brightness = 120;
-
-unsigned long time_of_last_event = millis();
-unsigned long millis_since_last_event = 0;
-
-volatile unsigned int prox = 0;
-volatile unsigned int touch = 0;
-boolean is_active;
-
-uint16_t led_boost[NUM_LEDS_IN_SECTION];
-uint8_t relative_brightnesses[NUM_LEDS_IN_SECTION];
-
-CRGBPalette16 gCurrentPalette( CRGB::Black);
-CRGBPalette16 gTargetPalette( CRGB::Blue);
-
-// end TreeChi
-
 void setup() {
 
   pinMode(FAN_OUT, OUTPUT);
@@ -208,6 +110,7 @@ void setup() {
 
   // set master brightness control
   FastLED.setBrightness(100);
+  FastLED.show();
 
   // sensor parameters
   sensor.show_sensor_value = 1;
@@ -225,14 +128,6 @@ void setup() {
 void loop()
 {
 
-  // reporting to serial output
-
-    EVERY_N_MILLISECONDS(LOGGING_PERIOD_IN_MILLIS) {
-       if(debug && 0){
-       //if(debug){
-        log_treechi();
-    }
-  }
 
   EVERY_N_MILLISECONDS(sensing_period_in_millis) {
     check_action();
@@ -244,7 +139,6 @@ void loop()
       }
     }
 
-    // show_treechi_lights();
     FastLED.show();
   }
 
@@ -295,24 +189,6 @@ void send_string_data_over_serial(uint8_t sequence_step, uint8_t byte_value) {
   // Send two integers representing the elements, can be decoded by receiver
   Serial.print(sequence_step);
   Serial.println(byte_value);
-}
-
-void log_treechi(){
-  Serial.print("Time since last event: ");
-  Serial.println(millis_since_last_event);
-  // Serial.print("touchRead: ");
-  // Serial.println(touchread);
-  Serial.print("Analog: ");
-  Serial.println(adc_val);
-   //Serial.print("FastLED Brightness Level: ");
-   //Serial.println(255); // current_brightness);
-   //Serial.print("Hue: ");
-   //Serial.println(current_hue);
-  Serial.print("Current Max Brightness: ");
-  Serial.println(max_brightness);
-  Serial.print("is active: ");
-  Serial.println(is_active);
-  Serial.println();
 }
 
 void log_process_signal(uint8_t signal){
@@ -508,7 +384,8 @@ void trigger_led_strip(uint8_t signal){
   // show line, with or without gap
   switch (signal) {
     case 0:    //
-      // Serial.println("showing 0 in LED strip with gap");
+      //Serial.println("showing 0 in LED strip with gap");
+      //Serial.print("show ")
       light_zero(current_strip_index, start_pixel, end_pixel, color, gap_color);
       break;
     case 1:    //
@@ -551,153 +428,3 @@ void light_one(uint8_t strip_index, uint16_t start_pixel, uint16_t end_pixel, CR
 
 
 // --- end lighting routines
-
-
-// from TreeChi
-void show_treechi_lights_for_section(uint8_t strip_index, uint16_t start_pixel){
-
-    uint16_t single_strip_start_pixel = strip_index * (NUM_LEDS / 2) + start_pixel;
-
-    // DEBUG printing
-    Serial.print("Lighting TreeChi-style for strip ");
-    Serial.print(strip_index);
-    Serial.print(", start_pixel ");
-    Serial.println(start_pixel);
-
-
-
-    for( uint8_t i = 0; i < NUM_LEDS_IN_SECTION; i++) {
-
-       if (led_boost[i] > 0){
-          led_boost[i] -= 1;
-        }
-
-       uint8_t hue = hue_before_boost + led_boost[i] / 2;
-
-       // we are shifting by start pixel
-       leds[0][single_strip_start_pixel + i] = ColorFromPalette( gCurrentPalette, hue, relative_brightnesses[i], LINEARBLEND);
-     }
-}
-
-void show_treechi_lights(){
-
-  // set parameters
-  get_brightness();
-
-  if(current_trigram == 1){
-    // if on first trigram, show TreeChi for entire 2nd trigram
-    show_treechi_lights_for_section(1, start_section_1);
-    show_treechi_lights_for_section(1, start_section_2);
-    show_treechi_lights_for_section(1, start_section_3);
-  }
-
-  // now set up for partial strip
-  uint8_t strip_index = 0;
-  if(current_trigram == 2){
-    strip_index = 1;
-  }
-
-  if(current_touch_state < 2){
-    show_treechi_lights_for_section(strip_index, start_section_1);
-  }
-  if (current_touch_state < 3){
-    show_treechi_lights_for_section(strip_index, start_section_2);
-  }
-  if (current_touch_state < 4){
-    show_treechi_lights_for_section(strip_index, start_section_3);
-  }
-}
-
-void get_brightness(){
-    // adc_val = analogRead(A0);
-    adc_val = sensor.sensor_value;
-
-    // reset timeout if either signal exists
-    if (adc_val > adc_threshold || adc_val < lo_signal_threshold){
-      time_of_last_event = millis();
-    }
-
-    // check if current state is active
-    unsigned long current_time = millis();
-    millis_since_last_event = current_time - time_of_last_event;
-
-    // set the brightness levels and palette depending on whether we are active
-    if (millis_since_last_event < TIMEOUT_MILLIS){
-      min_brightness = min_brightness_active;
-      max_brightness = max_brightness_active;
-      twinkle_boost = twinkle_boost_active;
-      hue_before_boost = hue_before_boost_active;
-      gTargetPalette = active_palette;
-      BLENDING_PERIOD_IN_MILLIS = blending_period_to_active;
-      NUM_BLENDING_CALLS_PER_LOOP = num_blending_calls_to_active;
-      MAX_PALETTE_CHANGES_PER_BLEND = 36;
-      is_active = true;
-    }
-    else{
-      min_brightness = min_brightness_standby;
-      max_brightness = max_brightness_standby;
-      twinkle_boost = twinkle_boost_standby;
-      hue_before_boost = hue_before_boost_standby;
-      gTargetPalette = standby_palette;
-      BLENDING_PERIOD_IN_MILLIS = blending_period_to_standby;
-      NUM_BLENDING_CALLS_PER_LOOP = num_blending_calls_to_standby;
-      MAX_PALETTE_CHANGES_PER_BLEND = 24;
-      is_active = false;
-    }
-
-    // calculate brightness
-    float normalized_signal = float(adc_val) / MAX_ANALOG;
-    new_brightness = uint16_t(normalized_signal * (max_brightness - min_brightness) + min_brightness);
-
-//    current_hue = adc_val / 4;
-
-    if (new_brightness < current_brightness){
-       current_brightness -= 1;
-    }
-    else if ( new_brightness > current_brightness){
-      current_brightness += 1;
-    }
-
-//    if (is_active){
-      active_pixel = uint8_t(normalized_signal * NUM_LEDS_IN_SECTION);
-      led_boost[active_pixel] = twinkle_boost;
-
-//    }
-//    else{
-//      if (random8() < CHANCE_OF_TWINKLE){
-//        active_pixel = (random8() * NUM_LEDS) / 255;
-//        led_boost[active_pixel] = twinkle_boost_standby;
-//        Serial.print("random pixel  ");
-//        Serial.print(active_pixel);
-//        Serial.print("  ");
-//        Serial.println(max_brightness + led_boost[active_pixel]);
-//      }
-//    }
-
-    for( uint8_t i = 0; i < NUM_LEDS_IN_SECTION; i++) {
-      relative_brightnesses[i] = current_brightness;
-      relative_brightnesses[i] += led_boost[i];
-    }
-
-}
-
-void limit_brightness(){
-   // limit brightness just in case
-    if (current_brightness < 0){
-      current_brightness = 0;
-    }
-    if (current_brightness > 255){
-      current_brightness = 255;
-    }
-}
-
-uint8_t limit_brightness_val(uint16_t given_brightness){
-   // limit brightness just in case
-    if (given_brightness < 0){
-      given_brightness = 0;
-    }
-    if (given_brightness > 255){
-      given_brightness = 255;
-    }
-    return given_brightness;
-}
