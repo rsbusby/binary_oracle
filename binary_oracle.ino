@@ -10,18 +10,16 @@ boolean debug = 1;
 int sensing_period_in_millis = 100;
 
 // milliseconds for sensing and recording
-int sensor_time_millis = 2000;
+// int sensor_time_millis = 2000;
 
 // time to record sensor values when waiting for signal (takes 2 to start)
-unsigned long millis_between_start_detections = 280;
+// unsigned long millis_between_start_detections = 280;
 
 // low and high threshold for a signal to be detected
-unsigned int lo_signal_threshold = 180;
-unsigned int hi_signal_threshold = 650;
+// unsigned int lo_signal_threshold = 180;
+// unsigned int hi_signal_threshold = 650;
 
-int show_sensor_value = 1;
-
-unsigned long time_between_trigrams_in_millis = 4000;
+// unsigned long time_between_trigrams_in_millis = 4000;
 
 // Set the method of analyzing analog bio-signal
 // 0 = Counting Peaks / Troughs
@@ -76,10 +74,6 @@ int start_section_3 = NUM_LEDS_IN_SECTION * 2;
 #define PUMP_OUT 18
 #define UV_LED_OUT 19
 #define FIRE_LED_OUT 20
-
-// digital input pins for Azoteq sensors (note that analog input A0 is pin 14)
-#define AZOTEQ_PROX_PIN 22
-#define AZOTEQ_TOUCH_PIN 23
 
 // LED strip properties
 #define LED_TYPE WS2811
@@ -208,17 +202,17 @@ void setup() {
   delay(1000); // 2 second delay for recovery
 
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
-  FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS);
+  // FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS);
 
   // set master brightness control
   FastLED.setBrightness(100);
 
   // sensor parameters
   sensor.show_sensor_value = 1;
-  sensor.lo_signal_threshold = lo_signal_threshold;
-  sensor.hi_signal_threshold = hi_signal_threshold;
-  sensor.millis_between_start_detections = millis_between_start_detections;
-  sensor.sensor_time_millis = sensor_time_millis;
+  sensor.lo_signal_threshold = 180;
+  sensor.hi_signal_threshold = 650;
+  sensor.millis_between_start_detections = 280;
+  sensor.sensor_time_millis = 2000;
   sensor.bio_signal_analysis_type = bio_signal_analysis_type;
   sensor.simulated_data = 0;
   sensor.debug = 1; //debug;
