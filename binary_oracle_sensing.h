@@ -1,4 +1,4 @@
-#define NUM_SENSOR_VALUES 600
+#define NUM_SENSOR_VALUES 200
 
 
 // sensing from the analogInput pin for the binary Oracle
@@ -124,7 +124,7 @@ void get_analog_value_and_add_to_time_series(){
     sensor_values[sensor_count] = sensor_value;
     sensor_count += 1;
     if (sensor_count == NUM_SENSOR_VALUES){
-      if(debug){
+      if(debug && 0){
         Serial.println("OUT OF MEMORY");
       }
       sensor_count = 0;
