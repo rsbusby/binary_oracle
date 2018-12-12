@@ -98,19 +98,19 @@ void setup() {
   analogWrite(UV_LED_OUT, 0);
   // tell FastLED about the LED strip configuration
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(1000); // 2 second delay for recovery
 
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
   // FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS);
 
-  for(uint16_t i=0;i<NUM_LEDS;i++){
-    leds[0][i] = CRGB::Black;
-  }
+  // for(uint16_t i=0;i<NUM_LEDS;i++){
+  //   leds[0][i] = CRGB::Black;
+  // }
 
   // set master brightness control
   FastLED.setBrightness(100);
-  FastLED.show();
+  // FastLED.show();
 
   // sensor parameters
   sensor.show_sensor_value = 1;
