@@ -7,10 +7,10 @@
 boolean debug = 1;
 
 // how often we poll the bio-signal
-int sensing_period_in_millis = 100;
+uint16_t sensing_period_in_millis = 100;
 
 // milliseconds for sensing and recording
-int sensor_time_millis = 2000;
+unsigned int sensor_time_millis = 2000;
 
 // time to record sensor values when waiting for signal (takes 2 to start)
 // unsigned long millis_between_start_detections = 280;
@@ -25,15 +25,15 @@ unsigned int lo_signal_threshold = 180;
 // 0 = Counting Peaks / Troughs
 // 1 = Average Amplitude of Peaks vs/ Troughs (not implemented)
 // 2 = mock random values
-int bio_signal_analysis_type = 0;
+uint8_t bio_signal_analysis_type = 0;
 
 unsigned long element_action_duration = 3000;
 
 // 255 is fully on, not PWM
-int element_action_write_value = 255;
+uint8_t element_action_write_value = 255;
 
 // the gap in the zero LED pattern will be twice this many pixels
-int led_half_gap = 5;
+uint8_t led_half_gap = 5;
 CRGB global_gap_color = CRGB::White; // Use Black for dark pixels
 
 // --- END PARAMETERS TO ADJUST -----
@@ -43,9 +43,9 @@ BinaryOracleSensor sensor = BinaryOracleSensor(2000, 180, 650, 0);
 
 // current state of system is denoted by 2 variables
 // current trigram can be 1 or 2
-int current_trigram = 1;
+uint8_t current_trigram = 1;
 // current_touch_state can be 1, 2, 3, 4
-int current_touch_state = 1;
+uint8_t current_touch_state = 1;
 
 boolean sensor_paused;
 unsigned long start_pause_sensor_time_in_millis;
@@ -54,19 +54,17 @@ unsigned long sensor_pause_duration = 4000;
 // LED parameters
 #define NUM_LEDS 120
 #define NUM_LEDS_IN_SECTION 20
-#define NUM_STRIPS 1
+// #define NUM_STRIPS 1
 #define LED_DATA_PIN_1 15
 #define LED_DATA_PIN_2 16
 
 
-int num_effective_pixels_in_trigram = NUM_LEDS / 2;
-
-int start_trigram_2 = num_effective_pixels_in_trigram;
+// int num_effective_pixels_in_trigram = NUM_LEDS / 2;
 
 // where do sections begin
-int start_section_1 = 0;
-int start_section_2 = NUM_LEDS_IN_SECTION;
-int start_section_3 = NUM_LEDS_IN_SECTION * 2;
+uint8_t start_section_1 = 0;
+uint8_t start_section_2 = NUM_LEDS_IN_SECTION;
+uint8_t start_section_3 = NUM_LEDS_IN_SECTION * 2;
 
 // Output pins
 
@@ -80,15 +78,15 @@ int start_section_3 = NUM_LEDS_IN_SECTION * 2;
 #define COLOR_ORDER BRG
 
 // initialize FastLED strips
-CRGB leds[NUM_STRIPS][NUM_LEDS];
+CRGB leds[0][NUM_LEDS];
 
 unsigned long element_start_time_in_millis;
 boolean element_action_is_on = 0;
-int current_element_action_pin;
+uint8_t current_element_action_pin;
 
-int touch_1;
-int touch_2;
-int touch_3;
+uint8_t touch_1;
+uint8_t touch_2;
+uint8_t touch_3;
 
 // ---------- from TreeChi ----------------------------
 
@@ -112,8 +110,8 @@ uint8_t MAX_PALETTE_CHANGES_PER_BLEND = 36;
 // maximum analog signal value
 #define MAX_ANALOG  1024
 
-unsigned int new_brightness;
-unsigned int exp_brightness;
+uint8_t new_brightness;
+uint8_t exp_brightness;
 
 // analog event threshold
 volatile unsigned int adc_threshold = 800;
@@ -146,26 +144,26 @@ unsigned int SENSING_PERIOD_IN_MILLIS = 40;  // 40 works
 unsigned int LOOP_DELAY_IN_MILLIS = 0;  // delay for every loop 10 works, do we even need this when installed?
 
 
-unsigned int num_blending_calls_to_active = 8;
-unsigned int num_blending_calls_to_standby = 6;
+uint8_t num_blending_calls_to_active = 8;
+uint8_t num_blending_calls_to_standby = 6;
 
-unsigned int blending_period_to_active = 2;
-unsigned int blending_period_to_standby = 2;
+uint8_t blending_period_to_active = 2;
+uint8_t blending_period_to_standby = 2;
 
 
 // --- END ADJUSTABLE PARAMETERS for TreeChi
 
-unsigned int NUM_BLENDING_CALLS_PER_LOOP = 1;
-unsigned int BLENDING_PERIOD_IN_MILLIS = 40;
+uint8_t NUM_BLENDING_CALLS_PER_LOOP = 1;
+uint8_t BLENDING_PERIOD_IN_MILLIS = 40;
 
 // testing by simulating a changing analog signal
-int fake_analog_increment = 2;
+uint8_t fake_analog_increment = 2;
 
 uint16_t active_pixel = 0;
 
 // timing and sensor variables
-unsigned int adc_val;
-int touchread;
+uint16_t adc_val;
+// int touchread;
 uint8_t current_brightness;
 uint8_t current_hue;
 
@@ -284,12 +282,12 @@ boolean is_sensor_enabled(){
   return 0;
 }
 
-int get_element_index_from_binary_values(int touch_1, int touch_2, int touch_3) {
+uint8_t get_element_index_from_binary_values(uint8_t touch_1, uint8_t touch_2, uint8_t touch_3) {
   // get a number between 1 and 8 from 3 binary values
   return touch_1 + touch_2 * 2 + touch_3 * 4;
 }
 
-void send_string_data_over_serial(int sequence_step, int byte_value) {
+void send_string_data_over_serial(uint8_t sequence_step, uint8_t byte_value) {
   // Send two integers representing the elements, can be decoded by receiver
   Serial.print(sequence_step);
   Serial.println(byte_value);
@@ -298,8 +296,8 @@ void send_string_data_over_serial(int sequence_step, int byte_value) {
 void log_treechi(){
   Serial.print("Time since last event: ");
   Serial.println(millis_since_last_event);
-  Serial.print("touchRead: ");
-  Serial.println(touchread);
+  // Serial.print("touchRead: ");
+  // Serial.println(touchread);
   Serial.print("Analog: ");
   Serial.println(adc_val);
    //Serial.print("FastLED Brightness Level: ");
@@ -313,7 +311,7 @@ void log_treechi(){
   Serial.println();
 }
 
-void log_process_signal(int signal){
+void log_process_signal(uint8_t signal){
   if (current_touch_state < 4){
     Serial.print("** touch ");
   }
@@ -325,7 +323,7 @@ void log_process_signal(int signal){
   Serial.println(signal);
 }
 
-void process_signal(int signal){
+void process_signal(uint8_t signal){
 
   if (debug){
     log_process_signal(signal);
@@ -402,7 +400,7 @@ void reset_system(){
 
 void trigger_element_action(){
 
-  int element = get_element_index_from_binary_values(touch_1, touch_2, touch_3);
+  uint8_t element = get_element_index_from_binary_values(touch_1, touch_2, touch_3);
 
   // do something different depending on the element value:
   switch (element) {
@@ -471,18 +469,18 @@ void trigger_element_action(){
 // -------------------------------
 // -- LED strip lighting routines
 
-void trigger_led_strip(int signal){
+void trigger_led_strip(uint8_t signal){
 
   // initialize for current_touch_state == 1, to avoid compiler warnings
-  int start_pixel = 0;
-  int end_pixel = NUM_LEDS_IN_SECTION;
+  uint16_t start_pixel = 0;
+  uint16_t end_pixel = NUM_LEDS_IN_SECTION;
   CRGB color = CRGB::Yellow;
   CRGB gap_color = global_gap_color;
 
-  int single_strip_shift = (current_trigram - 1) * num_effective_pixels_in_trigram;
+  uint16_t single_strip_shift = (current_trigram - 1) * (NUM_LEDS / 2);
 
   // strip index is 0 or 1
-  int current_strip_index = 0; // 0 means single strip //current_trigram - 1;
+  uint8_t current_strip_index = 0; // 0 means single strip //current_trigram - 1;
 
   // determine which pixels to change, and what color
   switch (current_touch_state) {
@@ -517,31 +515,31 @@ void trigger_led_strip(int signal){
 }
 
 // show colored set of pixels, with a gap
-void light_zero(int strip_index, int start_pixel, int end_pixel, CRGB color, CRGB gap_color){
+void light_zero(uint8_t strip_index, uint16_t start_pixel, uint16_t end_pixel, CRGB color, CRGB gap_color){
 
-    int half_point = (end_pixel - start_pixel) / 2;
+    uint16_t half_point = (end_pixel - start_pixel) / 2;
 
     // before gap
-    for(int dot = start_pixel; dot < half_point - led_half_gap; dot++) {
+    for(uint16_t dot = start_pixel; dot < half_point - led_half_gap; dot++) {
       leds[strip_index][dot] = color;
     }
 
     // gap
-    for(int dot = half_point - led_half_gap; dot < half_point + led_half_gap; dot++) {
+    for(uint16_t dot = half_point - led_half_gap; dot < half_point + led_half_gap; dot++) {
       leds[strip_index][dot] = gap_color;
     }
 
     // after gap
-    for(int dot = half_point + led_half_gap; dot < end_pixel; dot++) {
+    for(uint16_t dot = half_point + led_half_gap; dot < end_pixel; dot++) {
       leds[strip_index][dot] = color;
     }
     // FastLED.show();
 }
 
 // show colored set of pixels, with no gap
-void light_one(int strip_index, int start_pixel, int end_pixel, CRGB color){
+void light_one(uint8_t strip_index, uint16_t start_pixel, uint16_t end_pixel, CRGB color){
   // light all the pixels
-  for(int dot = start_pixel; dot < end_pixel; dot++) {
+  for(uint16_t dot = start_pixel; dot < end_pixel; dot++) {
     leds[strip_index][dot] = color;
   }
   // FastLED.show();
@@ -552,9 +550,9 @@ void light_one(int strip_index, int start_pixel, int end_pixel, CRGB color){
 
 
 // from TreeChi
-void show_treechi_lights_for_section(int strip_index, int start_pixel){
+void show_treechi_lights_for_section(uint8_t strip_index, uint16_t start_pixel){
 
-    int single_strip_start_pixel = strip_index * num_effective_pixels_in_trigram + start_pixel;
+    uint16_t single_strip_start_pixel = strip_index * (NUM_LEDS / 2) + start_pixel;
 
     // DEBUG printing
     Serial.print("Lighting TreeChi-style for strip ");
@@ -564,7 +562,7 @@ void show_treechi_lights_for_section(int strip_index, int start_pixel){
 
 
 
-    for( int i = 0; i < NUM_LEDS_IN_SECTION; i++) {
+    for( uint8_t i = 0; i < NUM_LEDS_IN_SECTION; i++) {
 
        if (led_boost[i] > 0){
           led_boost[i] -= 1;
@@ -590,7 +588,7 @@ void show_treechi_lights(){
   }
 
   // now set up for partial strip
-  int strip_index = 0;
+  uint8_t strip_index = 0;
   if(current_trigram == 2){
     strip_index = 1;
   }
@@ -645,7 +643,7 @@ void get_brightness(){
 
     // calculate brightness
     float normalized_signal = float(adc_val) / MAX_ANALOG;
-    new_brightness = int(normalized_signal * (max_brightness - min_brightness) + min_brightness);
+    new_brightness = uint16_t(normalized_signal * (max_brightness - min_brightness) + min_brightness);
 
 //    current_hue = adc_val / 4;
 
@@ -657,7 +655,7 @@ void get_brightness(){
     }
 
 //    if (is_active){
-      active_pixel = int(normalized_signal * NUM_LEDS_IN_SECTION);
+      active_pixel = uint8_t(normalized_signal * NUM_LEDS_IN_SECTION);
       led_boost[active_pixel] = twinkle_boost;
 
 //    }
@@ -672,7 +670,7 @@ void get_brightness(){
 //      }
 //    }
 
-    for( int i = 0; i < NUM_LEDS_IN_SECTION; i++) {
+    for( uint8_t i = 0; i < NUM_LEDS_IN_SECTION; i++) {
       relative_brightnesses[i] = current_brightness;
       relative_brightnesses[i] += led_boost[i];
     }

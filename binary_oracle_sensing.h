@@ -7,10 +7,10 @@ class BinaryOracleSensor
 
       // to be private?
       // array for sensor values
-      int sensor_values[NUM_SENSOR_VALUES];
-      int sensor_count = 0;
+      uint16_t sensor_values[NUM_SENSOR_VALUES];
+      uint16_t sensor_count = 0;
 
-      int start_detected = 0;
+      uint8_t start_detected = 0;
       unsigned long start_time_in_millis;
 
       boolean signal_detected_first = true;
@@ -19,11 +19,11 @@ class BinaryOracleSensor
 
 public:
 
-  int signal_finished = 0;
-  int signal;
+  uint8_t signal_finished = 0;
+  uint8_t signal;
 
-  int sensor_value;
-  int waiting;
+  uint16_t sensor_value;
+  uint8_t waiting;
 
   unsigned long max_diff_millis;
 
@@ -47,7 +47,7 @@ public:
   // 0 = Counting Peaks / Troughs
   // 1 = Average Amplitude of Peaks vs/ Troughs
   // 2 = mock random values
-  int bio_signal_analysis_type = 0;
+  uint8_t bio_signal_analysis_type = 0;
 
   boolean debug = 1;
 
@@ -75,7 +75,7 @@ public:
    current_time_in_millis = millis();
 
    if (waiting == 1){
-     int started = check_start();
+     uint8_t started = check_start();
      if (started){
        if (debug){
          Serial.println("          ++++ Detected touch ++++");
@@ -143,9 +143,9 @@ void reset_time_series(){
 
 // -----------------------------
 // functions to detect start of signal
-int min_sensor_val(){
-  int min_val = 1023;
-  for (int i=0; i < sensor_count;i++ ){
+uint16_t min_sensor_val(){
+  uint16_t min_val = 1023;
+  for (uint16_t i=0; i < sensor_count;i++ ){
     if ( sensor_values[i] < min_val ){
       min_val = sensor_values[i];
     }
@@ -154,9 +154,9 @@ int min_sensor_val(){
 }
 
 
-int max_sensor_val(){
-  int max_val = 0;
-  for (int i=0; i < sensor_count;i++ ){
+uint16_t max_sensor_val(){
+  uint16_t max_val = 0;
+  for (uint16_t i=0; i < sensor_count;i++ ){
     if ( sensor_values[i] > max_val ){
       max_val = sensor_values[i];
     }
@@ -165,7 +165,7 @@ int max_sensor_val(){
 }
 
 
-int detect_signal_in_time_series(){
+uint8_t detect_signal_in_time_series(){
   // check values in sensor_values to see if any past threshold
 
   if(simulated_data){
