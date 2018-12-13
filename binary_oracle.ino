@@ -52,7 +52,9 @@ unsigned long start_pause_sensor_time_in_millis;
 unsigned long sensor_pause_duration = 4000;
 
 // LED parameters
-#define NUM_LEDS 120
+#define OFFSET_LEDS 20
+#define NUM_LEDS 140
+#define NUM_ACTIVE_LEDS 120
 #define NUM_LEDS_IN_SECTION 20
 // #define NUM_STRIPS 1
 #define LED_DATA_PIN_1 13
@@ -132,7 +134,7 @@ void setup() {
 }
 
 void initialize_leds(){
-  for(int i=0;i<NUM_LEDS;i++){
+  for(int i=OFFSET_LEDS;i<NUM_LEDS;i++){
     leds[0][i] = CRGB::Wheat;
   }
 }
@@ -421,7 +423,7 @@ void trigger_led_strip(uint8_t signal){
   CRGB color = CRGB::Yellow;
   CRGB gap_color = global_gap_color;
 
-  uint16_t single_strip_shift = (current_trigram - 1) * (NUM_LEDS / 2);
+  uint16_t single_strip_shift = OFFSET_LEDS + (current_trigram - 1) * (NUM_ACTIVE_LEDS / 2);
 
   // strip index is 0 or 1
   uint8_t current_strip_index = 0; // 0 means single strip //current_trigram - 1;
