@@ -114,7 +114,7 @@ void setup() {
 
 
   // sensor parameters
-  sensor.show_sensor_value = 1;
+  sensor.show_sensor_value = 0;
   sensor.lo_signal_threshold = 180;
   sensor.hi_signal_threshold = 650;
   sensor.millis_between_start_detections = 280;
@@ -412,7 +412,7 @@ void trigger_led_strip(uint8_t signal){
 // show colored set of pixels, with a gap
 void light_zero(uint8_t strip_index, uint16_t start_pixel, uint16_t end_pixel, CRGB color, CRGB gap_color){
 
-    uint16_t half_point = (end_pixel - start_pixel) / 2;
+    uint16_t half_point = start_pixel + (end_pixel - start_pixel) / 2;
 
     // before gap
     for(uint16_t dot = start_pixel; dot < half_point - led_half_gap; dot++) {
@@ -429,11 +429,28 @@ void light_zero(uint8_t strip_index, uint16_t start_pixel, uint16_t end_pixel, C
       leds[0][dot] = color;
     }
     // FastLED.show();
+
+    if(debug){
+      Serial.print("light zero: ");
+      Serial.print(start_pixel);
+      Serial.print("  ");
+      Serial.print(half_point - led_half_gap);
+      Serial.print("  ");
+      Serial.print(half_point + led_half_gap);
+      Serial.print("  ");
+      Serial.println(end_pixel);
+    }
 }
 
 // show colored set of pixels, with no gap
 void light_one(uint8_t strip_index, uint16_t start_pixel, uint16_t end_pixel, CRGB color){
   // light all the pixels
+  if(debug){
+    Serial.print("light one:  ");
+    Serial.print(start_pixel);
+    Serial.print("  ");
+    Serial.println(end_pixel);
+  }
   for(uint16_t dot = start_pixel; dot < end_pixel; dot++) {
     leds[0][dot] = color;
   }
