@@ -52,10 +52,12 @@ unsigned long start_pause_sensor_time_in_millis;
 unsigned long sensor_pause_duration = 4000;
 
 // LED parameters
-#define NUM_LEDS 120
+#define OFFSET_LEDS 20
+#define NUM_LEDS 140
+#define NUM_ACTIVE_LEDS 120
 #define NUM_LEDS_IN_SECTION 20
 // #define NUM_STRIPS 1
-#define LED_DATA_PIN_1 15
+#define LED_DATA_PIN_1 13
 #define LED_DATA_PIN_2 16
 
 
@@ -120,8 +122,8 @@ void setup() {
 
 
   // sensor parameters
-  sensor.show_sensor_value = 1;
-  sensor.lo_signal_threshold = 250;
+  sensor.show_sensor_value = 0;
+  sensor.lo_signal_threshold = 180;
   sensor.hi_signal_threshold = 650;
   sensor.millis_between_start_detections = 280;
   sensor.sensor_time_millis = 2000;
@@ -132,7 +134,7 @@ void setup() {
 }
 
 void initialize_leds(){
-  for(int i=0;i<NUM_LEDS;i++){
+  for(int i=OFFSET_LEDS;i<NUM_LEDS;i++){
     leds[0][i] = CRGB::Wheat;
   }
 }
@@ -338,7 +340,7 @@ void trigger_element_action(){
   element_action_duration = 4000;
 
   // test single element
-  element = 6;
+  element = 2;
 
   // do something different depending on the element value:
   switch (element) {
@@ -348,31 +350,35 @@ void trigger_element_action(){
       }
       current_element_action_pin = UV_LED_OUT;
       element_action_duration = 4000;
+      show_trigram_color_from_element((current_trigram - 1), element, CRGB::WhiteSmoke, CRGB::Black);
       break;
     case 1:    // Thunder, 001, Sound
       if(debug){
        Serial.println("001 element -- Thunder");
       }
       element_action_is_on = 0;
+      show_trigram_color_from_element((current_trigram - 1), element, CRGB::Green, CRGB::White);
       return;
     case 2:    // Water, 010, Pump
       if(debug){
         Serial.println("010 element -- Water");
       }
       current_element_action_pin = PUMP_OUT;
-      element_action_duration = 2500;
+      show_trigram_color_from_element((current_trigram - 1), element, CRGB::Indigo, CRGB::White);
       break;
     case 3:    // Lake, 011, Pump
       if(debug){
         Serial.println("011 element -- Lake");
       }
       current_element_action_pin = PUMP_OUT;
+      show_trigram_color_from_element((current_trigram - 1), element, CRGB::White, CRGB::Black);
       break;
     case 4:    // Mountain, 100, Sound
       if(debug){
         Serial.println("100 element -- Mountain");
       }
       element_action_is_on = 0;
+      show_trigram_color_from_element((current_trigram - 1), element, CRGB::Amethyst, CRGB::White);
       return;
     case 5:    // Fire , 101, Fire LED
       if(debug){
@@ -382,13 +388,14 @@ void trigger_element_action(){
       fire_is_hot = true;
       element_action_duration = 4000;
       start_element_timer();
+      show_trigram_color_from_element((current_trigram - 1), element, CRGB::Red, CRGB::White);
       return;
     case 6:    // Wind, 110, Fan
       if(debug){
         Serial.println("110 element -- Wind");
       }
       current_element_action_pin = FAN_OUT;
-      element_action_duration = 5000;
+      show_trigram_color_from_element((current_trigram - 1), element, CRGB::Purple, CRGB::White);
       break;
     case 7:    // Earth, 111, Sound
       if(debug){
@@ -396,6 +403,7 @@ void trigger_element_action(){
       }
  //     current_element_action_pin = FAN_OUT;
       element_action_is_on = 0;
+      show_trigram_color_from_element((current_trigram - 1), element, CRGB::LightGoldenrodYellow, CRGB::White);
       return;
   }
 
@@ -423,7 +431,7 @@ void trigger_led_strip(uint8_t signal){
   CRGB color = CRGB::Yellow;
   CRGB gap_color = global_gap_color;
 
-  uint16_t single_strip_shift = (current_trigram - 1) * (NUM_LEDS / 2);
+  uint16_t single_strip_shift = OFFSET_LEDS + (current_trigram - 1) * (NUM_ACTIVE_LEDS / 2);
 
   // strip index is 0 or 1
   uint8_t current_strip_index = 0; // 0 means single strip //current_trigram - 1;
@@ -511,3 +519,64 @@ void light_one(uint8_t strip_index, uint16_t start_pixel, uint16_t end_pixel, CR
 
 
 // --- end lighting routines
+
+
+// color routines
+
+
+// end color routines
+
+void light_by_signal(uint8_t cur_signal, int start_pixel, int end_pixel, CRGB color, CRGB gap_color){
+
+  // show line, with or without gap
+  switch (cur_signal) {
+    case 0:    //
+      //Serial.println("showing 0 in LED strip with gap");
+      //Serial.print("show ")
+      light_zero(0, start_pixel, end_pixel, color, gap_color);
+      break;
+    case 1:    //
+      // Serial.println("showing 1 in LED strip with no gap");
+      light_one(0 , start_pixel, end_pixel, color);
+      break;
+  }
+
+}
+
+void show_trigram_color(uint8_t trigram_index, CRGB color, CRGB gap_color, uint8_t one, uint8_t two, uint8_t three){
+
+
+  uint16_t single_strip_shift = OFFSET_LEDS + (current_trigram - 1) * (NUM_ACTIVE_LEDS / 2);
+
+  int start_1 = OFFSET_LEDS + trigram_index * (NUM_ACTIVE_LEDS / 2);
+  int start_2 = start_1 + NUM_LEDS_IN_SECTION;
+  int start_3 = start_2 + NUM_LEDS_IN_SECTION;
+  int end_3 = start_3 + NUM_LEDS_IN_SECTION;
+
+  light_by_signal(one, start_1, start_2, color, gap_color);
+  light_by_signal(two, start_1, start_3, color, gap_color);
+  light_by_signal(three, start_3, end_3, color, gap_color);
+
+}
+
+void show_trigram_color_from_element(uint8_t trigram_index, uint8_t element, CRGB color, CRGB gap_color){
+
+  switch (element) {
+    case 0:
+      show_trigram_color(trigram_index, color, gap_color, 0, 0, 0);
+    case 1:
+      show_trigram_color(trigram_index, color, gap_color, 0, 0, 1);
+    case 2:
+      show_trigram_color(trigram_index, color, gap_color, 0, 1, 0);
+    case 3:
+      show_trigram_color(trigram_index, color, gap_color, 0, 1, 1);
+    case 4:
+      show_trigram_color(trigram_index, color, gap_color, 1, 0, 0);
+    case 5:
+      show_trigram_color(trigram_index, color, gap_color, 1, 0, 1);
+    case 6:
+      show_trigram_color(trigram_index, color, gap_color, 1, 1, 0);
+    case 7:
+      show_trigram_color(trigram_index, color, gap_color, 1, 1, 1);
+    }
+}
