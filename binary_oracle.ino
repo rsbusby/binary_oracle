@@ -406,17 +406,17 @@ void light_zero(uint8_t strip_index, uint16_t start_pixel, uint16_t end_pixel, C
 
     // before gap
     for(uint16_t dot = start_pixel; dot < half_point - led_half_gap; dot++) {
-      leds[strip_index][dot] = color;
+      leds[0][dot] = color;
     }
 
     // gap
     for(uint16_t dot = half_point - led_half_gap; dot < half_point + led_half_gap; dot++) {
-      leds[strip_index][dot] = gap_color;
+      leds[0][dot] = gap_color;
     }
 
     // after gap
     for(uint16_t dot = half_point + led_half_gap; dot < end_pixel; dot++) {
-      leds[strip_index][dot] = color;
+      leds[0][dot] = color;
     }
     // FastLED.show();
 }
@@ -425,7 +425,7 @@ void light_zero(uint8_t strip_index, uint16_t start_pixel, uint16_t end_pixel, C
 void light_one(uint8_t strip_index, uint16_t start_pixel, uint16_t end_pixel, CRGB color){
   // light all the pixels
   for(uint16_t dot = start_pixel; dot < end_pixel; dot++) {
-    leds[strip_index][dot] = color;
+    leds[0][dot] = color;
   }
   // FastLED.show();
 }
