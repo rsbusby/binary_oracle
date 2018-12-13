@@ -335,6 +335,10 @@ void trigger_element_action(){
 
   uint8_t element = get_element_index_from_binary_values(touch_1, touch_2, touch_3);
 
+
+  // fire test
+  element = 5;
+
   // do something different depending on the element value:
   switch (element) {
     case 0:    // Heaven, 000, UV LED
