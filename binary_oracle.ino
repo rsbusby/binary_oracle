@@ -55,7 +55,7 @@ unsigned long sensor_pause_duration = 4000;
 #define NUM_LEDS 120
 #define NUM_LEDS_IN_SECTION 20
 // #define NUM_STRIPS 1
-#define LED_DATA_PIN_1 13
+#define LED_DATA_PIN_1 15
 #define LED_DATA_PIN_2 16
 
 
