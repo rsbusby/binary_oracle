@@ -60,7 +60,7 @@ unsigned long sensor_pause_duration = 4000;
 
 
 #define NUM_LEDS_FIRE 7
-#define LED_DATA_PIN_FIRE 18
+#define LED_DATA_PIN_FIRE 16
 #define LED_TYPE_FIRE WS2811
 #define COLOR_ORDER_FIRE BRG
 // int num_effective_pixels_in_trigram = NUM_LEDS / 2;
@@ -75,7 +75,6 @@ uint8_t start_section_3 = NUM_LEDS_IN_SECTION * 2;
 #define FAN_OUT 17
 #define PUMP_OUT 18
 #define UV_LED_OUT 19
-#define FIRE_LED_OUT 20
 
 // LED strip properties
 #define LED_TYPE WS2811
