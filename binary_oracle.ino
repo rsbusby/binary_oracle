@@ -98,7 +98,7 @@ void setup() {
   analogWrite(UV_LED_OUT, 0);
   // tell FastLED about the LED strip configuration
 
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(1000); // 2 second delay for recovery
 
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
