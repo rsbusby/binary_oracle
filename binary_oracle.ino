@@ -88,6 +88,8 @@ uint8_t touch_1;
 uint8_t touch_2;
 uint8_t touch_3;
 
+boolean start = true;
+
 void setup() {
 
   pinMode(FAN_OUT, OUTPUT);
@@ -103,11 +105,12 @@ void setup() {
 
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
   // FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS);
+  delay(1000); // 2 second delay for recovery
 
 
   // set master brightness control
   FastLED.setBrightness(100);
-  initialize_leds();
+  // initialize_leds();
 
 
   // sensor parameters
@@ -131,6 +134,11 @@ void initialize_leds(){
 // main loop
 void loop()
 {
+
+  if(start){
+    initialize_leds();
+    start = false;
+  }
 
 
   EVERY_N_MILLISECONDS(sensing_period_in_millis) {
