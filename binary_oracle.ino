@@ -25,7 +25,7 @@ unsigned int lo_signal_threshold = 180;
 // 0 = Counting Peaks / Troughs
 // 1 = Average Amplitude of Peaks vs/ Troughs (not implemented)
 // 2 = mock random values
-uint8_t bio_signal_analysis_type = 0;
+uint8_t bio_signal_analysis_type = 2;
 
 unsigned long element_action_duration = 3000;
 
@@ -55,7 +55,7 @@ unsigned long sensor_pause_duration = 4000;
 #define NUM_LEDS 120
 #define NUM_LEDS_IN_SECTION 20
 // #define NUM_STRIPS 1
-#define LED_DATA_PIN_1 15
+#define LED_DATA_PIN_1 13
 #define LED_DATA_PIN_2 16
 
 
@@ -98,7 +98,7 @@ void setup() {
   analogWrite(UV_LED_OUT, 0);
   // tell FastLED about the LED strip configuration
 
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(1000); // 2 second delay for recovery
 
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
@@ -118,7 +118,7 @@ void setup() {
   sensor.sensor_time_millis = 2000;
   sensor.bio_signal_analysis_type = 0;
   sensor.simulated_data = 0;
-  sensor.debug = 0; //debug;
+  sensor.debug = 1; //debug;
 
 }
 
