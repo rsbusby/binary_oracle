@@ -78,7 +78,7 @@ uint8_t start_section_3 = NUM_LEDS_IN_SECTION * 2;
 #define COLOR_ORDER BRG
 
 // initialize FastLED strips
-CRGB leds[0][NUM_LEDS];
+CRGB leds[1][NUM_LEDS];
 
 unsigned long element_start_time_in_millis;
 boolean element_action_is_on = 0;
@@ -87,6 +87,8 @@ uint8_t current_element_action_pin;
 uint8_t touch_1;
 uint8_t touch_2;
 uint8_t touch_3;
+
+boolean start = true;
 
 void setup() {
 
@@ -103,11 +105,12 @@ void setup() {
 
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
   // FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS);
+  delay(1000); // 2 second delay for recovery
 
 
   // set master brightness control
   FastLED.setBrightness(100);
-  initialize_leds();
+  // initialize_leds();
 
 
   // sensor parameters
@@ -131,6 +134,11 @@ void initialize_leds(){
 // main loop
 void loop()
 {
+
+  if(start){
+    initialize_leds();
+    start = false;
+  }
 
 
   EVERY_N_MILLISECONDS(sensing_period_in_millis) {
