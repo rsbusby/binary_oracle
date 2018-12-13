@@ -165,6 +165,7 @@ void loop()
 
 // turn of fire LEDs
 void quench_fire(){
+  fire_is_hot = 0;
   for(uint8_t i=0;i<NUM_LEDS_FIRE;i++){
     leds_fire[i] = CRGB::Black;
   }
@@ -174,7 +175,7 @@ void quench_fire(){
 void fire_colors_fastled(){
   for(int i=0;i<NUM_LEDS_FIRE;i++){
      uint8_t red = random(0, 255);
-     uint8_t green = random(0, red/2);
+     uint8_t green = random(0, red/4);
      leds_fire[i] = CRGB(red,green, 0);
   }
 }
@@ -196,6 +197,7 @@ void check_action(){
           Serial.print("Turning off fire action");
         }
         quench_fire();
+        fire_is_hot = 0;
       }
       else{
         if(debug){
