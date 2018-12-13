@@ -59,6 +59,10 @@ unsigned long sensor_pause_duration = 4000;
 #define LED_DATA_PIN_2 16
 
 
+#define NUM_LEDS_FIRE 7
+#define LED_DATA_PIN_FIRE 18
+#define LED_TYPE_FIRE WS2811
+#define COLOR_ORDER_FIRE BRG
 // int num_effective_pixels_in_trigram = NUM_LEDS / 2;
 
 // where do sections begin
@@ -79,9 +83,11 @@ uint8_t start_section_3 = NUM_LEDS_IN_SECTION * 2;
 
 // initialize FastLED strips
 CRGB leds[1][NUM_LEDS];
+CRGB leds_fire[NUM_LEDS_FIRE];
 
 unsigned long element_start_time_in_millis;
 boolean element_action_is_on = 0;
+boolean fire_is_hot = 0;
 uint8_t current_element_action_pin;
 
 uint8_t touch_1;
@@ -104,9 +110,10 @@ void setup() {
   delay(1000); // 2 second delay for recovery
 
   FastLED.addLeds<LED_TYPE, LED_DATA_PIN_1, COLOR_ORDER>(leds[0], NUM_LEDS);
-  // FastLED.addLeds<LED_TYPE, LED_DATA_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS);
-  delay(1000); // 2 second delay for recovery
-
+  FastLED.addLeds<LED_TYPE_FIRE, LED_DATA_PIN_FIRE, COLOR_ORDER_FIRE>(leds_fire, NUM_LEDS_FIRE);
+  // for(uint16_t i=0;i<NUM_LEDS;i++){
+  //   leds[0][i] = CRGB::Black;
+  // }
 
   // set master brightness control
   FastLED.setBrightness(100);
@@ -143,6 +150,7 @@ void loop()
 
   EVERY_N_MILLISECONDS(sensing_period_in_millis) {
     check_action();
+    update_fire();
     if(is_sensor_enabled()){
       sensor.check_binary_signal();
       if (sensor.signal_finished){
@@ -156,16 +164,47 @@ void loop()
 
 }
 
+// turn of fire LEDs
+void quench_fire(){
+  for(uint8_t i=0;i<NUM_LEDS_FIRE;i++){
+    leds_fire[i] = CRGB::Black;
+  }
+}
+
+// random flickering
+void fire_colors_fastled(){
+  for(int i=0;i<NUM_LEDS_FIRE;i++){
+     uint8_t red = random(0, 255);
+     uint8_t green = random(0, red/2);
+     leds_fire[i] = CRGB(red,green, 0);
+  }
+}
+
+void update_fire(){
+  if(fire_is_hot){
+    fire_colors_fastled();
+  }
+}
+
 // turn off action if it's time is up
 void check_action(){
-  if(element_action_is_on){
+  if(element_action_is_on || fire_is_hot){
     unsigned long current_time_in_millis = millis();
     if(current_time_in_millis - element_start_time_in_millis > element_action_duration){
-      if(debug){
-        Serial.print("Turning off analog output pin ");
-        Serial.println(current_element_action_pin);
+
+      if (fire_is_hot){
+        if(debug){
+          Serial.print("Turning off fire action");
+        }
+        quench_fire();
       }
-      analogWrite(current_element_action_pin, 0);
+      else{
+        if(debug){
+          Serial.print("Turning off analog output pin ");
+          Serial.println(current_element_action_pin);
+        }
+        analogWrite(current_element_action_pin, 0);
+      }
       element_action_is_on = 0;
     }
   }
@@ -296,6 +335,10 @@ void trigger_element_action(){
 
   uint8_t element = get_element_index_from_binary_values(touch_1, touch_2, touch_3);
 
+
+  // fire test
+  element = 5;
+
   // do something different depending on the element value:
   switch (element) {
     case 0:    // Heaven, 000, UV LED
@@ -333,7 +376,8 @@ void trigger_element_action(){
         Serial.println("101 element -- Fire");
       }
       // TODO: implement fire
-      element_action_is_on = 0;
+      fire_is_hot = true;
+      start_element_timer();
       return;
     case 6:    // Wind, 110, Fan
       if(debug){
@@ -355,10 +399,13 @@ void trigger_element_action(){
     Serial.println(current_element_action_pin);
   }
   analogWrite(current_element_action_pin, element_action_write_value);
+  start_element_timer();
+}
+
+void start_element_timer(){
   element_action_is_on = 1;
   element_start_time_in_millis = millis();
 }
-
 
 // -------------------------------
 // -- LED strip lighting routines
