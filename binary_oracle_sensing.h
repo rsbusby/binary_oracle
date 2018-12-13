@@ -1,5 +1,4 @@
-#define NUM_SENSOR_VALUES 4
-
+#define NUM_SENSOR_VALUES 400
 
 // sensing from the analogInput pin for the binary Oracle
 class BinaryOracleSensor
