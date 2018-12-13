@@ -59,8 +59,8 @@ unsigned long sensor_pause_duration = 4000;
 #define LED_DATA_PIN_2 16
 
 
-#define NUM_LEDS_FIRE 12
-#define LED_DATA_PIN_FIRE 16
+#define NUM_LEDS_FIRE 7
+#define LED_DATA_PIN_FIRE 18
 #define LED_TYPE_FIRE WS2811
 #define COLOR_ORDER_FIRE BRG
 // int num_effective_pixels_in_trigram = NUM_LEDS / 2;
