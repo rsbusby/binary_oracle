@@ -563,6 +563,10 @@ void show_trigram_color(uint8_t trigram_index, CRGB color, CRGB gap_color, uint8
 
 void show_trigram_color_from_element(uint8_t trigram_index, uint8_t element, CRGB color, CRGB gap_color){
 
+  if(1){
+    return;
+  }
+
   switch (element) {
     case 0:
       show_trigram_color(trigram_index, color, gap_color, 0, 0, 0);
