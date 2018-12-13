@@ -78,7 +78,7 @@ uint8_t start_section_3 = NUM_LEDS_IN_SECTION * 2;
 #define COLOR_ORDER BRG
 
 // initialize FastLED strips
-CRGB leds[0][NUM_LEDS];
+CRGB leds[1][NUM_LEDS];
 
 unsigned long element_start_time_in_millis;
 boolean element_action_is_on = 0;
