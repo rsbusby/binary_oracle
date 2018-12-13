@@ -57,7 +57,7 @@ unsigned long sensor_pause_duration = 4000;
 #define NUM_ACTIVE_LEDS 120
 #define NUM_LEDS_IN_SECTION 20
 // #define NUM_STRIPS 1
-#define LED_DATA_PIN_1 13
+#define LED_DATA_PIN_1 15
 #define LED_DATA_PIN_2 16
 
 
@@ -122,8 +122,8 @@ void setup() {
 
 
   // sensor parameters
-  sensor.show_sensor_value = 0;
-  sensor.lo_signal_threshold = 180;
+  sensor.show_sensor_value = 1;
+  sensor.lo_signal_threshold = 250;
   sensor.hi_signal_threshold = 650;
   sensor.millis_between_start_detections = 280;
   sensor.sensor_time_millis = 2000;
@@ -340,7 +340,7 @@ void trigger_element_action(){
   element_action_duration = 4000;
 
   // test single element
-  element = 2;
+  element = 6;
 
   // do something different depending on the element value:
   switch (element) {
@@ -365,6 +365,7 @@ void trigger_element_action(){
       }
       current_element_action_pin = PUMP_OUT;
       show_trigram_color_from_element((current_trigram - 1), element, CRGB::Indigo, CRGB::White);
+      element_action_duration = 2500;
       break;
     case 3:    // Lake, 011, Pump
       if(debug){
@@ -396,6 +397,7 @@ void trigger_element_action(){
       }
       current_element_action_pin = FAN_OUT;
       show_trigram_color_from_element((current_trigram - 1), element, CRGB::Purple, CRGB::White);
+      element_action_duration = 5000;
       break;
     case 7:    // Earth, 111, Sound
       if(debug){
