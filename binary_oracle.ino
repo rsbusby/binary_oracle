@@ -335,10 +335,10 @@ void reset_system(){
 void trigger_element_action(){
 
   uint8_t element = get_element_index_from_binary_values(touch_1, touch_2, touch_3);
+  element_action_duration = 4000;
 
-
-  // fire test
-  element = 5;
+  // test single element
+  element = 2;
 
   // do something different depending on the element value:
   switch (element) {
@@ -347,6 +347,7 @@ void trigger_element_action(){
         Serial.println("000 element -- Heaven");
       }
       current_element_action_pin = UV_LED_OUT;
+      element_action_duration = 4000;
       break;
     case 1:    // Thunder, 001, Sound
       if(debug){
@@ -378,6 +379,7 @@ void trigger_element_action(){
       }
       // TODO: implement fire
       fire_is_hot = true;
+      element_action_duration = 4000;
       start_element_timer();
       return;
     case 6:    // Wind, 110, Fan
