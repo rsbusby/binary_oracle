@@ -120,8 +120,8 @@ void setup() {
 
 
   // sensor parameters
-  sensor.show_sensor_value = 0;
-  sensor.lo_signal_threshold = 180;
+  sensor.show_sensor_value = 1;
+  sensor.lo_signal_threshold = 250;
   sensor.hi_signal_threshold = 650;
   sensor.millis_between_start_detections = 280;
   sensor.sensor_time_millis = 2000;
@@ -338,7 +338,7 @@ void trigger_element_action(){
   element_action_duration = 4000;
 
   // test single element
-  element = 2;
+  element = 6;
 
   // do something different depending on the element value:
   switch (element) {
@@ -360,6 +360,7 @@ void trigger_element_action(){
         Serial.println("010 element -- Water");
       }
       current_element_action_pin = PUMP_OUT;
+      element_action_duration = 2500;
       break;
     case 3:    // Lake, 011, Pump
       if(debug){
@@ -387,6 +388,7 @@ void trigger_element_action(){
         Serial.println("110 element -- Wind");
       }
       current_element_action_pin = FAN_OUT;
+      element_action_duration = 5000;
       break;
     case 7:    // Earth, 111, Sound
       if(debug){
