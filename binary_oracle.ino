@@ -127,7 +127,7 @@ void setup() {
 
 void initialize_leds(){
   for(int i=0;i<NUM_LEDS;i++){
-    leds[0][i] = CRGB(0,255,0);
+    leds[0][i] = CRGB::Wheat;
   }
 }
 
@@ -287,6 +287,8 @@ void process_signal(uint8_t signal){
 void reset_system(){
   // reset both LED strips
   // anything else?
+  initialize_leds();
+
 }
 
 
@@ -379,17 +381,17 @@ void trigger_led_strip(uint8_t signal){
      case 1:    //
        start_pixel = start_section_1 + single_strip_shift;
        end_pixel = start_pixel + NUM_LEDS_IN_SECTION;
-       color = CRGB::Red;
+       color = CRGB::DarkMagenta;
        break;
     case 2:    //
       start_pixel = start_section_2 + single_strip_shift;
       end_pixel = start_pixel + NUM_LEDS_IN_SECTION;
-      color = CRGB::Blue;
+      color = CRGB::SlateBlue;
       break;
     case 3:    //
       start_pixel = start_section_3 + single_strip_shift;
       end_pixel = start_pixel + NUM_LEDS_IN_SECTION;
-      color = CRGB::Green;
+      color = CRGB::Lime;
       break;
   }
 
