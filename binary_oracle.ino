@@ -33,7 +33,7 @@ unsigned long element_action_duration = 3000;
 uint8_t element_action_write_value = 255;
 
 // the gap in the zero LED pattern will be twice this many pixels
-uint8_t led_half_gap = 5;
+uint8_t led_half_gap = 2;
 CRGB global_gap_color = CRGB::White; // Use Black for dark pixels
 
 // --- END PARAMETERS TO ADJUST -----
