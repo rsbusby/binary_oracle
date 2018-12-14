@@ -4,7 +4,7 @@
 
 // ----------------------------------
 // --- PARAMETERS TO ADJUST ---------
-boolean debug = 1;
+boolean debug = 0;
 
 // how often we poll the bio-signal
 uint16_t sensing_period_in_millis = 100;
@@ -122,14 +122,14 @@ void setup() {
 
 
   // sensor parameters
-  sensor.show_sensor_value = 1;
+  sensor.show_sensor_value = 0;
   sensor.lo_signal_threshold = 250;
   sensor.hi_signal_threshold = 650;
   sensor.millis_between_start_detections = 280;
   sensor.sensor_time_millis = 2000;
   sensor.bio_signal_analysis_type = 0;
   sensor.simulated_data = 0;
-  sensor.debug = 1; //debug;
+  sensor.debug = 0; //debug;
 
 }
 
@@ -340,7 +340,7 @@ void trigger_element_action(){
   element_action_duration = 4000;
 
   // test single element
-  element = 6;
+  // element = 6;
 
   // do something different depending on the element value:
   switch (element) {
@@ -547,42 +547,48 @@ void light_by_signal(uint8_t cur_signal, int start_pixel, int end_pixel, CRGB co
 
 void show_trigram_color(uint8_t trigram_index, CRGB color, CRGB gap_color, uint8_t one, uint8_t two, uint8_t three){
 
-
-  uint16_t single_strip_shift = OFFSET_LEDS + (current_trigram - 1) * (NUM_ACTIVE_LEDS / 2);
-
   int start_1 = OFFSET_LEDS + trigram_index * (NUM_ACTIVE_LEDS / 2);
   int start_2 = start_1 + NUM_LEDS_IN_SECTION;
   int start_3 = start_2 + NUM_LEDS_IN_SECTION;
   int end_3 = start_3 + NUM_LEDS_IN_SECTION;
 
   light_by_signal(one, start_1, start_2, color, gap_color);
-  light_by_signal(two, start_1, start_3, color, gap_color);
+  light_by_signal(two, start_2, start_3, color, gap_color);
   light_by_signal(three, start_3, end_3, color, gap_color);
 
 }
 
 void show_trigram_color_from_element(uint8_t trigram_index, uint8_t element, CRGB color, CRGB gap_color){
 
-  if(1){
+  // 1 to skip, 0 to run
+  if(0){
     return;
   }
 
   switch (element) {
     case 0:
       show_trigram_color(trigram_index, color, gap_color, 0, 0, 0);
+      break;
     case 1:
-      show_trigram_color(trigram_index, color, gap_color, 0, 0, 1);
+      show_trigram_color(trigram_index, color, gap_color, 1, 0, 0);
+      break;
     case 2:
       show_trigram_color(trigram_index, color, gap_color, 0, 1, 0);
+      break;
     case 3:
-      show_trigram_color(trigram_index, color, gap_color, 0, 1, 1);
+      show_trigram_color(trigram_index, color, gap_color, 1, 1, 0);
+      break;
     case 4:
-      show_trigram_color(trigram_index, color, gap_color, 1, 0, 0);
+      show_trigram_color(trigram_index, color, gap_color, 0, 0, 1);
+      break;
     case 5:
       show_trigram_color(trigram_index, color, gap_color, 1, 0, 1);
+      break;
     case 6:
-      show_trigram_color(trigram_index, color, gap_color, 1, 1, 0);
+      show_trigram_color(trigram_index, color, gap_color, 0, 1, 1);
+      break;
     case 7:
       show_trigram_color(trigram_index, color, gap_color, 1, 1, 1);
+      break;
     }
 }
