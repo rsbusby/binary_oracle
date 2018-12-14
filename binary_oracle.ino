@@ -443,17 +443,17 @@ void trigger_led_strip(uint8_t signal){
      case 1:    //
        start_pixel = start_section_1 + single_strip_shift;
        end_pixel = start_pixel + NUM_LEDS_IN_SECTION;
-       color = CRGB::DarkMagenta;
+       color = CRGB::Turquoise;
        break;
     case 2:    //
       start_pixel = start_section_2 + single_strip_shift;
       end_pixel = start_pixel + NUM_LEDS_IN_SECTION;
-      color = CRGB::SlateBlue;
+      color = CRGB::Gold;
       break;
     case 3:    //
       start_pixel = start_section_3 + single_strip_shift;
       end_pixel = start_pixel + NUM_LEDS_IN_SECTION;
-      color = CRGB::Lime;
+      color = CRGB::Salmon;
       break;
   }
 
