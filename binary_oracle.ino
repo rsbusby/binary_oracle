@@ -313,6 +313,7 @@ void process_signal(uint8_t signal){
       current_trigram = 1;
 
       // pause everything for a bit
+      delay(element_action_duration);
       pause_sensor(10000);
       reset_system();
     }
