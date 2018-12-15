@@ -90,6 +90,7 @@ unsigned long element_start_time_in_millis;
 boolean element_action_is_on = 0;
 boolean fire_is_hot = 0;
 uint8_t current_element_action_pin;
+uint8_t current_element;
 
 uint8_t touch_1;
 uint8_t touch_2;
@@ -194,9 +195,11 @@ void check_action(){
     unsigned long current_time_in_millis = millis();
     if(current_time_in_millis - element_start_time_in_millis > element_action_duration){
 
+      // turn off fire
       if (fire_is_hot){
         if(debug){
-          Serial.print("Turning off fire action");
+          Serial.print("Turning off fire action, pin ");
+          Serial.println(LED_DATA_PIN_FIRE);
         }
         quench_fire();
         fire_is_hot = 0;
@@ -209,6 +212,18 @@ void check_action(){
         analogWrite(current_element_action_pin, 0);
       }
       element_action_is_on = 0;
+
+      // change fire, heaven to White
+      if(current_element == 0 || current_element == 5){
+        // fancy math to go back one trigram index when turning off
+        uint8_t last_trigram_index = current_trigram % 2;
+        if(debug){
+          Serial.print("Changing trigram to white: ");
+          Serial.println(last_trigram_index + 1);
+        }
+        show_trigram_color_from_element(last_trigram_index, current_element, CRGB::WhiteSmoke, CRGB::Black);
+      }
+
     }
   }
 }
@@ -337,35 +352,35 @@ void reset_system(){
 
 void trigger_element_action(){
 
-  uint8_t element = get_element_index_from_binary_values(touch_1, touch_2, touch_3);
+  current_element = get_element_index_from_binary_values(touch_1, touch_2, touch_3);
   element_action_duration = 4000;
 
   // test single element
-  // element = 6;
+  // current_element = 5;
 
   // do something different depending on the element value:
-  switch (element) {
+  switch (current_element) {
     case 0:    // Heaven, 000, UV LED
       if(debug){
         Serial.println("000 element -- Heaven");
       }
       current_element_action_pin = UV_LED_OUT;
       element_action_duration = 4000;
-      show_trigram_color_from_element((current_trigram - 1), element, CRGB::WhiteSmoke, CRGB::Black);
+      // show_trigram_color_from_element((current_trigram - 1), current_element, CRGB::WhiteSmoke, CRGB::Black);
       break;
     case 1:    // Thunder, 001, Sound
       if(debug){
        Serial.println("001 element -- Thunder");
       }
       element_action_is_on = 0;
-      show_trigram_color_from_element((current_trigram - 1), element, CRGB::Green, CRGB::White);
+      show_trigram_color_from_element((current_trigram - 1), current_element, CRGB::Green, CRGB::White);
       return;
     case 2:    // Water, 010, Pump
       if(debug){
         Serial.println("010 element -- Water");
       }
       current_element_action_pin = PUMP_OUT;
-      show_trigram_color_from_element((current_trigram - 1), element, CRGB::Indigo, CRGB::White);
+      show_trigram_color_from_element((current_trigram - 1), current_element, CRGB::Indigo, CRGB::White);
       element_action_duration = 2500;
       break;
     case 3:    // Lake, 011, Pump
@@ -373,14 +388,14 @@ void trigger_element_action(){
         Serial.println("011 element -- Lake");
       }
       current_element_action_pin = PUMP_OUT;
-      show_trigram_color_from_element((current_trigram - 1), element, CRGB::White, CRGB::Black);
+      show_trigram_color_from_element((current_trigram - 1), current_element, CRGB::White, CRGB::Black);
       break;
     case 4:    // Mountain, 100, Sound
       if(debug){
         Serial.println("100 element -- Mountain");
       }
       element_action_is_on = 0;
-      show_trigram_color_from_element((current_trigram - 1), element, CRGB::Amethyst, CRGB::White);
+      show_trigram_color_from_element((current_trigram - 1), current_element, CRGB::Amethyst, CRGB::White);
       return;
     case 5:    // Fire , 101, Fire LED
       if(debug){
@@ -390,14 +405,14 @@ void trigger_element_action(){
       fire_is_hot = true;
       element_action_duration = 4000;
       start_element_timer();
-      show_trigram_color_from_element((current_trigram - 1), element, CRGB::Red, CRGB::White);
+      show_trigram_color_from_element((current_trigram - 1), current_element, CRGB::Red, CRGB::White);
       return;
     case 6:    // Wind, 110, Fan
       if(debug){
         Serial.println("110 element -- Wind");
       }
       current_element_action_pin = FAN_OUT;
-      show_trigram_color_from_element((current_trigram - 1), element, CRGB::Purple, CRGB::White);
+      show_trigram_color_from_element((current_trigram - 1), current_element, CRGB::Purple, CRGB::White);
       element_action_duration = 5000;
       break;
     case 7:    // Earth, 111, Sound
@@ -406,7 +421,7 @@ void trigger_element_action(){
       }
  //     current_element_action_pin = FAN_OUT;
       element_action_is_on = 0;
-      show_trigram_color_from_element((current_trigram - 1), element, CRGB::LightGoldenrodYellow, CRGB::White);
+      show_trigram_color_from_element((current_trigram - 1), current_element, CRGB::LightGoldenrodYellow, CRGB::White);
       return;
   }
 

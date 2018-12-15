@@ -36,8 +36,8 @@ public:
   int millis_between_start_detections = 280;
 
   // low and high threshold for a signal to be detected
-  int lo_signal_threshold = 180;
-  int hi_signal_threshold = 600;
+  uint16_t lo_signal_threshold = 180;
+  uint16_t hi_signal_threshold = 600;
 
   boolean show_sensor_value = 0;
   boolean simulated_data = 0;
@@ -229,7 +229,7 @@ int check_start(){
 // functions to determine binary signal value
 int get_mean(){
   int sum = 0;
-  for (int i=0; i < sensor_count;i++ ){
+  for (uint16_t i=0; i < sensor_count;i++ ){
     sum += sensor_values[i];
   }
   // TODO: would this be faster without float conversion?
@@ -242,7 +242,7 @@ int compare_troughs_and_peaks(int ref_val){
   int lo_count = 0;
   int hi_count = 0;
 
-  for (int i=0; i < sensor_count;i++ ){
+  for (uint16_t i=0; i < sensor_count;i++ ){
     int val = sensor_values[i];
     if ( val < ref_val ){
       lo_count += 1;
