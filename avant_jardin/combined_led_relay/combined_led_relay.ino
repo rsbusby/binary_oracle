@@ -224,16 +224,6 @@ void setup() {
 
   for (int thisReading = 0; thisReading < numReadings; thisReading++) {
     readings[thisReading] = 0;
-
-  // Relay setup
-  pinMode(RELAY_OUTPUT_PIN, OUTPUT);
-
-  // set pullup in case the sensor is not present, avoid noise
-  // pinMode(TOUCH_PIN, INPUT_PULLUP);
-
-  // set the lastMist time so that it will spray immediately
-  lastMist = millis() - mistSpacing;
-
   }
   
   // tell FastLED about the LED strip configuration
@@ -245,6 +235,15 @@ void setup() {
 
   // set master brightness control
   FastLED.setBrightness(100); //100
+
+  // Relay setup
+  pinMode(RELAY_OUTPUT_PIN, OUTPUT);
+
+  // set pullup in case the sensor is not present, avoid noise
+  // pinMode(TOUCH_PIN, INPUT_PULLUP);
+
+  // set the lastMist time so that it will spray immediately
+  lastMist = millis() - mistSpacing;
 
 }
 
@@ -266,7 +265,7 @@ void loop()
         currently_misting = 0;
         Serial.println("stop mist");
     }        
-}
+  }
   else{  
       // not misting currently, should we be misting? 
       long timeSinceMist = millis() - lastMist;
